@@ -1,0 +1,2 @@
+1. Fixed navigation with ActionBar
+2. Fixed layouts in tablets - now both portrait and landscape supported
