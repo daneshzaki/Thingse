@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:background="#fff3f3f3"
+    android:orientation="vertical"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="50dp"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.daneshzaki.thingse.AboutThingse">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+        android:text="Thingse"
+        android:id="@+id/textView1"
+        android:layout_gravity="center_horizontal|bottom"
+        android:textColor="@color/holoblue"
+        android:gravity="center_horizontal|bottom" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:id="@+id/textView2"
+        android:layout_gravity="bottom|center_horizontal"
+        android:text="Version 0.2 Beta"
+        android:linksClickable="true"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small" />
+
+    <ImageView
+        android:layout_width="184dp"
+        android:layout_height="184dp"
+        android:id="@+id/imageView"
+        android:layout_gravity="center|bottom"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:layout_width="184dp"
+        android:layout_height="71dp"
+        android:id="@+id/textView3"
+        android:layout_gravity="bottom|center_horizontal"
+        android:text="Thingse keeps track of the things you have purchased or received as gifts."
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small" />
+
+    <TextView
+        android:layout_width="184dp"
+        android:layout_height="115dp"
+        android:id="@+id/textView4"
+        android:layout_gravity="bottom|center_horizontal"
+        android:text="(c) Danesh Zaki\n\n http://www.pleb.in"
+        android:linksClickable="true"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+        android:textAlignment="center" />
+
+
+</LinearLayout>

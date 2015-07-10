@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <EditTextPreference
+        android:name="Currency"
+        android:defaultValue="Rs."
+        android:key="currencyPref"
+        android:summary="Enter currency to be used"
+        android:title="Currency" />
+    <Preference
+        android:enabled="true"
+        android:key="export"
+        android:selectable="true"
+        android:summary="Export contents to file"
+        android:title="Export" />
+    <Preference
+        android:enabled="true"
+        android:key="import"
+        android:selectable="true"
+        android:summary="Import contents from file"
+        android:title="Import" />
+    <Preference
+        android:enabled="true"
+        android:key="aboutPref"
+        android:persistent="false"
+        android:selectable="true"
+        android:title="About Thingse" />
+    
+</PreferenceScreen>

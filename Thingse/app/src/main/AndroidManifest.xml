@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.daneshzaki.thingse"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="18"
+        android:targetSdkVersion="22" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@android:style/Theme.Material.Light"
+        android:screenOrientation="portrait" >
+        <activity
+            android:name=".ThingseActivity"
+            android:clearTaskOnLaunch="true"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".AddSomething" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ThingseActivity" />
+        </activity>
+        <activity android:name=".ViewSomething" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ThingseActivity" />
+
+        </activity>
+        <activity android:name=".EditSomething" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ViewSomething" />
+
+        </activity>
+        <activity
+            android:name=".Preferences"
+            android:label="@string/set_preferences" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ThingseActivity" />
+
+        </activity>
+        <activity
+            android:name=".AboutThingse"
+            android:parentActivityName=".Preferences">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Preferences" />
+        </activity>
+    </application>
+
+</manifest>

@@ -1,0 +1,35 @@
+//about dialog
+				new AlertDialog.Builder(Preferences.this)
+						.setTitle("Thingse 1.0 beta")
+						.setIcon(R.drawable.ic_launcher)
+						.setMessage(
+								"\t\tThingse keeps track of the things you have purchased or received as gifts\n\n \t\t(c) Danesh Zaki\n\n \t\twww.pleb.in")
+						.setPositiveButton(R.string.alert_dialog_ok,
+								new DialogInterface.OnClickListener()
+								{
+									public void onClick(DialogInterface dialog,
+											int whichButton)
+									{
+
+									}
+
+								}).create().show();
+0.2 Beta \n Thingse keeps track of the things you have purchased or received as gifts.\n\n \t\t(c) Danesh Zaki\n\n \t http://www.pleb.in
+
+    <TextView android:id="@+id/fullscreen_content" android:layout_width="match_parent"
+        android:layout_height="match_parent" android:keepScreenOn="true" android:textColor="#33b5e5"
+        android:textStyle="bold" android:textSize="50sp" android:gravity="center"
+        android:text="@string/dummy_content" />
+
+
+            ActionBar actionBar = getActionBar();
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP);
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#33B5E5")));
+            actionBar.setHomeButtonEnabled(true);
+
+
+		//go back home
+		else
+		{
+			startActivity(new Intent(ViewSomething.this, ThingseActivity.class));
+		}

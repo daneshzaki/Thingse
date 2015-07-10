@@ -1,0 +1,25 @@
+<resources>
+
+    <string name="app_name">Thingse</string>
+    <string name="menu_about">About Thingse</string>
+    <string name="title_activity_thingse">Thingse</string>
+    <string name="title_activity_add_something">Add Something</string>
+    <string name="title_activity_view_something">See a thing</string>
+    <string name="title_activity_edit_something">Edit Something</string>
+    <string name="add">+</string>
+    <string name="addHint">Add new thing</string>
+    <string name="displayThingsTitle">Things I Have</string>
+    <string name="pad"></string>
+    <string name="alert_dialog_ok">OK</string>
+    <string name="alert_dialog_cancel">Cancel</string>
+    <string name="currency">Price</string>
+    <string name="set_preferences">Preferences</string>
+    <string name="main_about">Thingse keeps track of the things you have purchased or received as gifts.\n\n Please start by adding a few things to your list</string>
+
+    <string name="title_activity_about_thingse">AboutThingse</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+</resources>
