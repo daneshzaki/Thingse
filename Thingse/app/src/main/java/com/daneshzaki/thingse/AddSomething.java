@@ -348,6 +348,8 @@ public class AddSomething extends Activity {
     	if(giftCheck.isChecked())
     	{
     		gift="g";
+			//Jul 12 2015 fix set price =0 for gift
+			inputs[1] = "0";
     	}
     	
     	inputs[2] = gift;

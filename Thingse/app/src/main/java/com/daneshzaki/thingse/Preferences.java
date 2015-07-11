@@ -150,6 +150,8 @@ public class Preferences extends PreferenceActivity
 				while(i>=0)
 				{
 					Log.i("Preferences", "record = "+importedContents[i]);
+					//e.g. 6,xiomi,6000,p,2015-07-23,,/storage/emulated/0/Pictures/Thingse/IMG_20150707_102042.jpg
+					//e.g 7,mouse,,g,2015-05-15,/storage/emulated/0/DCIM/Camera/IMG_20150515_182849.jpg,null
 					
 					//get fields from rec
 					StringTokenizer tokenizer = new StringTokenizer(importedContents[i], ",");
@@ -177,7 +179,7 @@ public class Preferences extends PreferenceActivity
 						fields[6]=fields[5];
 						fields[5]=fields[4];
 						fields[4]=fields[3];
-						fields[3]=fields[2];
+						fields[3]="g";
 						fields[2] = "";
 
 					}
