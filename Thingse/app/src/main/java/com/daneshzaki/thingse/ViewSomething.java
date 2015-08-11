@@ -8,16 +8,19 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import android.app.ActionBar;
@@ -31,8 +34,9 @@ public class ViewSomething extends Activity {
     {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
+		this.getWindow().setNavigationBarColor(Color.parseColor("#D0D0D0"));
 
-        setContentView(R.layout.activity_view_something);
+		setContentView(R.layout.activity_view_something);
 
 
         //set values of the selected thing in the input fields
@@ -46,11 +50,29 @@ public class ViewSomething extends Activity {
 
 		//load the thing values on the screen
         loadValues();
-    }
 
-    
+		Log.i("ViewSomething", "After loadValues Bundle contains " + bundle.getParcelable("imageBitmap"));
+
+	}
+
+	//call ViewFullScreen Activity to view thing full screen
+	public void viewThingFull(View v)
+	{
+		Log.i("ViewSomething", "*** viewThingFull ***");
+
+		//create an intent and add the bundle to it
+		Intent viewFullIntent = new Intent(this, ViewFullscreen.class);
+		Log.i("ViewSomething", "*** viewThingFull intent created");
+
+		viewFullIntent.putExtra("thing", bundle);
+		Log.i("ViewSomething", "calling ViewFullScreen class with bundle="+bundle);
+
+		startActivity(viewFullIntent);
+
+	}
+
     //call EditSomething Activity to edit thing 
-    public void editThing(View v)
+    public void editThing()
     {
     	Log.i("ViewSomething", "editThing entry bundle price = " + bundle.getString("price"));
     	
@@ -66,7 +88,7 @@ public class ViewSomething extends Activity {
     }
     
     //delete the thing from db
-    public void deleteThing(View v)
+    public void deleteThing()
     {
     	Log.i("ViewThing", "deleteThing entry");
     	
@@ -117,6 +139,9 @@ public class ViewSomething extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 
+		menu.add("FullScreen").setIcon(R.drawable.ic_settings_overscan_black_18dp)
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
 		menu.add("Edit").setIcon(R.drawable.ic_mode_edit_black_18dp)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
@@ -126,32 +151,52 @@ public class ViewSomething extends Activity {
 		return true;
 
 	}
-    //handle edit and delete
+    //handle view, edit and delete
 	@Override
 	public boolean onOptionsItemSelected(MenuItem menuItem)
 	{
 		Log.i("ViewSomething","MenuItem="+menuItem);
-		Log.i("ViewSomething","MenuItem title="+menuItem.getTitle());
+		Log.i("ViewSomething", "MenuItem title=" + menuItem.getTitle());
+
+		// view fullscreen
+		if (menuItem.getTitle() != null && menuItem.getTitle().equals("FullScreen"))
+		{
+			Log.i("ViewSomething","view Full screen called");
+			viewThingFull(new View(this));
+
+		}
+
 
 		// edit
-		if (menuItem.getTitle() != null && menuItem.getTitle().equals("Edit"))
+		else if (menuItem.getTitle() != null && menuItem.getTitle().equals("Edit"))
 		{
-			editThing(new View(this));
+			Log.i("ViewSomething","edit called");
+			editThing();
 		}
 
 		// delete
 		else if (menuItem.getTitle() != null && menuItem.getTitle().equals("Delete"))
 		{
-			deleteThing(new View(this));
+			Log.i("ViewSomething","del called");
+			deleteThing();
 		}
-		//go back home
-		else
+
+		//back
+		else if (menuItem.getItemId() == android.R.id.home)
 		{
-			startActivity(new Intent(ViewSomething.this, ThingseActivity.class));
+			Log.i("ViewSomething","back called");
+			//create an intent and add the bundle to it
+			Intent parentIntent= new Intent(this, ThingseActivity.class);
+
+			parentIntent.putExtra("thing", bundle);
+
+			startActivity(parentIntent);
+
 		}
 
 
-		return true;
+
+		return super.onOptionsItemSelected(menuItem);
 	}
 
     //fill fields with selected thing's values
@@ -169,7 +214,7 @@ public class ViewSomething extends Activity {
     	//set label for gift
     	if(bundle.getString("price").trim().startsWith("Gift :"))
     	{
-    		((TextView)findViewById( R.id.datePurchLabel)).setText("Received on ");	
+    		((TextView)findViewById( R.id.datePurchLabel)).setText("  Received on ");
     		((TextView)findViewById( R.id.forLabel)).setText(" as ");
     	}
     	
@@ -192,26 +237,69 @@ public class ViewSomething extends Activity {
     	//scale and set pic 
     	if(bundle.getString("picLocation")!= null && bundle.getString("picLocation").trim().length()>0)
     	{
-    		BitmapFactory.Options options = new BitmapFactory.Options();
+			BitmapFactory.Options options = new BitmapFactory.Options();
 
-    		//setting to 1/4th of the original size
-    		options.inSampleSize = 4; 
-    	        		    	    
-    	    Bitmap bmp = BitmapFactory.decodeFile(bundle.getString("picLocation"), options);
-    	    
-    	    Drawable d = new BitmapDrawable(getResources(), bmp);
-    	    
-    	    ((ImageView)findViewById(R.id.thingImage)).setImageDrawable(d);
+			//options.inSampleSize = 6;
+
+			//options.inDither = true;
+
+			//Jul-15 final int THUMBNAIL_SIZE = 64;
+			/*final int THUMBNAIL_SIZE = 128;
+
+			Bitmap bmp = BitmapFactory.decodeFile(bundle.getString("picLocation"), options);
+
+			Log.i("ViewSomething", "bmp.getWidth() = "+bmp.getWidth());
+
+			Log.i("ViewSomething", "bmp.getHeight() = " + bmp.getHeight());
+
+			int ratio = bmp.getWidth() / bmp.getHeight();
+
+			if (ratio <=0)
+			{
+				ratio = 1;
+			}
+
+			bmp = Bitmap.createScaledBitmap(bmp,
+					(int) (THUMBNAIL_SIZE * ratio), THUMBNAIL_SIZE, false);
+
+*/
+			Bitmap bmp = BitmapFactory.decodeFile(bundle.getString("picLocation"), options);
+
+			//get display size
+			Display display = getWindowManager().getDefaultDisplay();
+			Point size = new Point();
+			display.getSize(size);
+			int width = size.x;
+			int height = size.y;
+
+			bmp = Bitmap.createScaledBitmap(bmp, width, height, true);
+
+
+			Drawable d = new BitmapDrawable(getResources(), bmp);
+
+			ImageView thingImage = ((ImageView)findViewById(R.id.thingImage));
+			thingImage.setScaleX(0.75f);
+			thingImage.setScaleY(0.75f);
+			thingImage.setImageDrawable(d);
+
     	}
     	else
     	{
     		//set a one pixel image if there is no associated pic with this thing
-    	    ((ImageView)findViewById(R.id.thingImage)).setImageResource(R.drawable.onepixel);
+			ImageView thingImage = ((ImageView)findViewById(R.id.thingImage));
+			thingImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0.1f));
+
+
+
+			//((ImageView)findViewById(R.id.thingImage)).setImageResource(R.drawable.onepixel);
+
     	}
     	
     }
     
-    //bundle for use here and for edit something activity
+    //bundle for use here and for passing to edit activity
     private Bundle bundle = null;
-    
+
+
+
 }

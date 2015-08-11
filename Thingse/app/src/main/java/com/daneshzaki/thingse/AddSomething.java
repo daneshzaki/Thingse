@@ -12,8 +12,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,6 +32,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,8 +43,9 @@ public class AddSomething extends Activity {
     {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
+		this.getWindow().setNavigationBarColor(Color.parseColor("#D0D0D0"));
 
-        setContentView(R.layout.activity_add_something);
+		setContentView(R.layout.activity_add_something);
 
         ActionBar actionBar = getActionBar();
 		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP|ActionBar.DISPLAY_SHOW_TITLE);
@@ -94,7 +100,7 @@ public class AddSomething extends Activity {
     	String[] inputs = getInputs(false);
     	
     	//check if mandatory fields are filled
-    	if(inputs[0].length()>0)
+    	if(inputs != null && inputs[0].length()>0)
     	{
     		//gift check
     		if((inputs[2].equalsIgnoreCase("p") && inputs[1].length()>0) || (inputs[2].equalsIgnoreCase("g")))
@@ -222,15 +228,36 @@ public class AddSomething extends Activity {
             {
             	picLocation = fileUri.toString().replaceFirst("file://", "");
             	            	
-            	Log.i("AddSomething","*** picLocation = "+picLocation);
+            	Log.i("AddSomething", "*** picLocation = " + picLocation);
             	
             	// Image captured and saved to fileUri specified in the Intent
             
             	Toast.makeText(this, "Image saved to:\n" + picLocation, Toast.LENGTH_LONG).show();
-            	
-            	((TextView)findViewById(R.id.picLocation)).setText("Image captured!");
-            	
-            } 
+
+				//Jul15
+				//((TextView)findViewById(R.id.picLocation)).setText("Image captured!");
+
+				//scale and set pic
+				if(picLocation != null && picLocation.trim().length()>0)
+				{
+					BitmapFactory.Options options = new BitmapFactory.Options();
+
+					//setting to 1/16th of the original size
+					options.inSampleSize = 16;
+
+					Bitmap bmp = BitmapFactory.decodeFile(picLocation, options);
+
+					Drawable d = new BitmapDrawable(getResources(), bmp);
+
+					((ImageView)findViewById(R.id.picSelected)).setImageDrawable(d);
+				}
+				else
+				{
+					//set a one pixel image if there is no associated pic with this thing
+					((ImageView)findViewById(R.id.picSelected)).setImageResource(R.drawable.onepixel);
+				}
+
+			}
             else if (resultCode == RESULT_CANCELED) 
             {
                 // User cancelled the image capture
@@ -252,14 +279,36 @@ public class AddSomething extends Activity {
             	//parse and retrieve the selected image's location
             	picLocation = getFilePathFromContentUri(Uri.parse(data.getDataString()),this.getContentResolver());
 
-        		Log.i("AddSomething", "selected image location is "+picLocation);
+        		Log.i("AddSomething", "selected image location is " + picLocation);
         		
             	// Image chosen path            
             	Toast.makeText(this, "Image selected is :\n" + picLocation, Toast.LENGTH_LONG).show();            	
             	
-            	((TextView)findViewById(R.id.picLocation)).setText( "Image selected!");
-            	
-            } 
+
+				//Jul21
+				//((TextView)findViewById(R.id.picLocation)).setText("Image selected!");
+				//scale and set pic
+				if(picLocation != null && picLocation.trim().length()>0)
+				{
+					BitmapFactory.Options options = new BitmapFactory.Options();
+
+					//setting to 1/16th of the original size
+					options.inSampleSize = 16;
+
+					Bitmap bmp = BitmapFactory.decodeFile(picLocation, options);
+
+					Drawable d = new BitmapDrawable(getResources(), bmp);
+
+					((ImageView)findViewById(R.id.picSelected)).setImageDrawable(d);
+				}
+				else
+				{
+					//set a one pixel image if there is no associated pic with this thing
+					((ImageView)findViewById(R.id.picSelected)).setImageResource(R.drawable.onepixel);
+				}
+
+
+			}
             else if (resultCode == RESULT_CANCELED) 
             {
                 // User cancelled the image capture
@@ -315,8 +364,13 @@ public class AddSomething extends Activity {
     	if(thing.trim().length()<=0 && !saveState)
     	{
     		thingField.setHighlightColor(android.graphics.Color.RED);
-    		
-			new AlertDialog.Builder(AddSomething.this)                
+			thingField.setError("Thing name is mandatory");
+			thingField.requestFocus();
+
+			return null;
+
+			//Jul-15
+			/*new AlertDialog.Builder(AddSomething.this)
 			 .setTitle("Thing name is mandatory ")
 			 .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
 			     public void onClick(DialogInterface dialog, int whichButton) {
@@ -326,7 +380,7 @@ public class AddSomething extends Activity {
 			    	 return;
 			     	
 			     }
-			 }).create().show();
+			 }).create().show();*/
 		
     		
     	}
@@ -358,8 +412,12 @@ public class AddSomething extends Activity {
     	if(price.trim().length() <=0 && gift.equals("p") && !saveState)
     	{
     		priceField.setHighlightColor(android.graphics.Color.RED);
+			priceField.setError("Price is mandatory if thing is not gift ");
+			priceField.requestFocus();
 
-			new AlertDialog.Builder(AddSomething.this)                
+			return null;
+
+			/* Jul15 -new AlertDialog.Builder(AddSomething.this)
 			 .setTitle("Price is mandatory if thing is not gift ")
 			 .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
 			     public void onClick(DialogInterface dialog, int whichButton) {
@@ -369,7 +427,7 @@ public class AddSomething extends Activity {
 					dialog.dismiss();
 			     	
 			     }
-			 }).create().show();
+			 }).create().show();*/
 
     	}
     	

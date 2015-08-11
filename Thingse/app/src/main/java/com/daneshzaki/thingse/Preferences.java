@@ -35,6 +35,8 @@ public class Preferences extends PreferenceActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		this.getWindow().setNavigationBarColor(Color.parseColor("#D0D0D0"));
+
 		addPreferencesFromResource(R.xml.preferences);
 
 		ActionBar actionBar = getActionBar();

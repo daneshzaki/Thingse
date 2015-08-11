@@ -33,7 +33,7 @@
             android:enabled="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:numColumns="3"
+            android:numColumns="2"
             android:selectAllOnFocus="true"
             android:text=" "
             android:textAppearance="?android:attr/textAppearanceMedium"

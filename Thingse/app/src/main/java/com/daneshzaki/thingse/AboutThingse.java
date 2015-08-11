@@ -15,6 +15,9 @@ public class AboutThingse extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
+        this.getWindow().setStatusBarColor(Color.parseColor("#33B5E5"));
+        this.getWindow().setNavigationBarColor(Color.parseColor("#fff3f3f3"));
+
         setContentView(R.layout.activity_about_thingse);
 
 

@@ -44,10 +44,23 @@
         android:layout_marginTop="2dp"
         android:layout_weight="0.25" >
 
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_weight="0.25" >
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:layout_span="2"
+            android:weightSum="1">
 
             <EditText
                 android:id="@+id/priceField"
@@ -66,25 +79,9 @@
                 android:id="@+id/giftCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_local_florist_black_18dp"
-                android:text="Gift?" />
-        </LinearLayout>
-    </TableRow>
-
-    <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
-        android:layout_marginTop="2dp"
-        android:layout_weight="0.25" >
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+                android:drawableStart="@drawable/ic_local_florist_black_18dp"
+                android:text="Gift?"
+                android:layout_weight="0.35" />
 
             <Button
                 android:id="@+id/datePurchField"
@@ -94,11 +91,12 @@
                 android:drawableStart="@drawable/ic_event_black_18dp"
                 android:onClick="showDatePickerDialog"
                 android:text="Date Purchased"
-                android:clickable="true" />
+                android:clickable="true"
+                android:layout_weight="0.25" />
         </LinearLayout>
     </TableRow>
 
-    <TableRow 
+    <TableRow
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="2dp"
@@ -127,18 +125,20 @@
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
         android:layout_marginTop="2dp"
-        android:layout_weight="0.25" >
+        android:layout_weight="0.25"
+        android:layout_gravity="center_horizontal">
 
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:orientation="horizontal" >
+            android:layout_gravity="start"
+            android:orientation="horizontal"
+            android:layout_span="2">
 
             <TextView
                 android:id="@+id/picLabel"
-                android:layout_width="wrap_content"
+                android:layout_width="88dp"
                 android:layout_height="wrap_content"
                 android:text="Picture"
                 android:textAppearance="?android:attr/textAppearanceSmall"
@@ -146,11 +146,11 @@
 
             <Button
                 android:id="@+id/uploadButton"
-                android:layout_width="wrap_content"
+                android:layout_width="111dp"
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:contentDescription="Gallery"
-                android:drawableLeft="@drawable/ic_file_download_black_18dp"
+                android:drawableStart="@drawable/ic_file_download_black_18dp"
                 android:onClick="uploadPic"
                 android:tag="Select from gallery"
                 android:text="Choose"
@@ -159,11 +159,11 @@
 
             <Button
                 android:id="@+id/cameraButton"
-                android:layout_width="wrap_content"
+                android:layout_width="110dp"
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:contentDescription="Take picture"
-                android:drawableLeft="@drawable/ic_camera_black_18dp"
+                android:drawableStart="@drawable/ic_camera_black_18dp"
                 android:onClick="callCamera"
                 android:tag="Take picture"
                 android:text="Click"
@@ -186,10 +186,11 @@
             android:id="@+id/picLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_column="1"
+            android:layout_column="0"
             android:text=" "
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#669900" />
+            android:textColor="#669900"
+            android:layout_span="2" />
     </TableRow>
 
     <TableRow
@@ -197,6 +198,20 @@
         android:layout_weight="1"
         android:gravity="center" >
 
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/picSelected"
+
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
     </TableRow>
 
 </TableLayout>

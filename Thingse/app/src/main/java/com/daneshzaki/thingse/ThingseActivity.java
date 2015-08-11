@@ -42,8 +42,8 @@ public class ThingseActivity extends ListActivity
 	{
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_ACTION_BAR);
-
-		setContentView(R.layout.activity_thingse);			
+		this.getWindow().setNavigationBarColor(Color.parseColor("#D0D0D0"));
+		setContentView(R.layout.activity_thingse);
 		Log.i("ThingseActivity", "ThingseActivity onCreate");
 
 		// get the list view for this activity
@@ -310,7 +310,8 @@ public class ThingseActivity extends ListActivity
 
 			options.inDither = false;
 
-			final int THUMBNAIL_SIZE = 64;
+			//Jul-15 final int THUMBNAIL_SIZE = 64;
+			final int THUMBNAIL_SIZE = 128;
 
 			Bitmap bmp = BitmapFactory.decodeFile(thingImageLocation, options);
 
