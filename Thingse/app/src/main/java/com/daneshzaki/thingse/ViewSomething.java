@@ -139,9 +139,6 @@ public class ViewSomething extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 
-		menu.add("FullScreen").setIcon(R.drawable.ic_settings_overscan_black_18dp)
-				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
 		menu.add("Edit").setIcon(R.drawable.ic_mode_edit_black_18dp)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
@@ -158,17 +155,9 @@ public class ViewSomething extends Activity {
 		Log.i("ViewSomething","MenuItem="+menuItem);
 		Log.i("ViewSomething", "MenuItem title=" + menuItem.getTitle());
 
-		// view fullscreen
-		if (menuItem.getTitle() != null && menuItem.getTitle().equals("FullScreen"))
-		{
-			Log.i("ViewSomething","view Full screen called");
-			viewThingFull(new View(this));
-
-		}
-
 
 		// edit
-		else if (menuItem.getTitle() != null && menuItem.getTitle().equals("Edit"))
+		if (menuItem.getTitle() != null && menuItem.getTitle().equals("Edit"))
 		{
 			Log.i("ViewSomething","edit called");
 			editThing();
@@ -193,8 +182,6 @@ public class ViewSomething extends Activity {
 			startActivity(parentIntent);
 
 		}
-
-
 
 		return super.onOptionsItemSelected(menuItem);
 	}
@@ -274,12 +261,12 @@ public class ViewSomething extends Activity {
 
 			bmp = Bitmap.createScaledBitmap(bmp, width, height, true);
 
-
 			Drawable d = new BitmapDrawable(getResources(), bmp);
 
 			ImageView thingImage = ((ImageView)findViewById(R.id.thingImage));
-			thingImage.setScaleX(0.75f);
-			thingImage.setScaleY(0.75f);
+
+			//thingImage.setScaleX(0.75f);
+			//thingImage.setScaleY(0.75f);
 			thingImage.setImageDrawable(d);
 
     	}
@@ -288,8 +275,6 @@ public class ViewSomething extends Activity {
     		//set a one pixel image if there is no associated pic with this thing
 			ImageView thingImage = ((ImageView)findViewById(R.id.thingImage));
 			thingImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0.1f));
-
-
 
 			//((ImageView)findViewById(R.id.thingImage)).setImageResource(R.drawable.onepixel);
 
