@@ -81,7 +81,8 @@
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_local_florist_black_18dp"
                 android:text="Gift?"
-                android:layout_weight="0.35" />
+                android:layout_weight="0.35"
+                android:textSize="16dp" />
 
             <Button
                 android:id="@+id/datePurchField"
@@ -92,7 +93,9 @@
                 android:onClick="showDatePickerDialog"
                 android:text="Date Purchased"
                 android:clickable="true"
-                android:layout_weight="0.25" />
+                android:layout_weight="0.25"
+                android:textSize="16dp"
+                android:typeface="normal" />
         </LinearLayout>
     </TableRow>
 
@@ -139,10 +142,11 @@
             <TextView
                 android:id="@+id/picLabel"
                 android:layout_width="88dp"
-                android:layout_height="wrap_content"
+                android:layout_height="47dp"
                 android:text="Picture"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#ff000000" />
+                android:textColor="#ff000000"
+                android:textSize="16dp" />
 
             <Button
                 android:id="@+id/uploadButton"
@@ -155,7 +159,7 @@
                 android:tag="Select from gallery"
                 android:text="Choose"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                 />
+                android:textSize="16dp" />
 
             <Button
                 android:id="@+id/cameraButton"
@@ -168,7 +172,7 @@
                 android:tag="Take picture"
                 android:text="Click"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                 />
+                android:textSize="16dp" />
         </LinearLayout>
     </TableRow>
 

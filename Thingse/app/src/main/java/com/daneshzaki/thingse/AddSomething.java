@@ -232,7 +232,7 @@ public class AddSomething extends Activity {
             	
             	// Image captured and saved to fileUri specified in the Intent
             
-            	Toast.makeText(this, "Image saved to:\n" + picLocation, Toast.LENGTH_LONG).show();
+            	Toast.makeText(this, "Image saved to:\n" + picLocation, Toast.LENGTH_SHORT).show();
 
 				//Jul15
 				//((TextView)findViewById(R.id.picLocation)).setText("Image captured!");
@@ -282,7 +282,7 @@ public class AddSomething extends Activity {
         		Log.i("AddSomething", "selected image location is " + picLocation);
         		
             	// Image chosen path            
-            	Toast.makeText(this, "Image selected is :\n" + picLocation, Toast.LENGTH_LONG).show();            	
+            	Toast.makeText(this, "Image selected is :\n" + picLocation, Toast.LENGTH_SHORT).show();
             	
 
 				//Jul21

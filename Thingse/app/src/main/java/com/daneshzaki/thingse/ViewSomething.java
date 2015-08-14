@@ -42,9 +42,6 @@ public class ViewSomething extends Activity {
         //set values of the selected thing in the input fields
         bundle = this.getIntent().getBundleExtra("thing");
 
-        //set currency chosen by user
-		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-		((TextView)findViewById( R.id.forLabel)).setText(" for "+sharedPrefs.getString("currencyPref", "Rs.")+"");        
 
 		Log.i("ViewSomething", "Before loadValues Bundle is "+bundle);
 
@@ -189,6 +186,12 @@ public class ViewSomething extends Activity {
     //fill fields with selected thing's values
     private void loadValues()
     {
+		//gift label
+		String giftLabel = "";
+
+		//currency label
+		String currencyLabel = "";
+
     	//set thing name   
     	Log.i("ViewSomething", "Bundle is " + bundle);
 
@@ -198,23 +201,31 @@ public class ViewSomething extends Activity {
 		actionBar.setHomeButtonEnabled(true);
 		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
 
+		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
     	//set label for gift
     	if(bundle.getString("price").trim().startsWith("Gift :"))
     	{
-    		((TextView)findViewById( R.id.datePurchLabel)).setText("  Received on ");
-    		((TextView)findViewById( R.id.forLabel)).setText(" as ");
+    		giftLabel = "Received on ";
     	}
+		else
+		{
+			giftLabel = "Purchased on ";
+
+			//set currency chosen by user
+			currencyLabel = sharedPrefs.getString("currencyPref", "Rs.");
+		}
     	
     	//set price
-    	((TextView)findViewById( R.id.priceValue)).setText(bundle.getString("price"));
+		((TextView)findViewById( R.id.priceValue)).setText((currencyLabel + bundle.getString("price")).trim());
 
     	//set purchase date
-    	((TextView)findViewById( R.id.datePurchValue)).setText(bundle.getString("purchaseDate"));
+    	((TextView)findViewById( R.id.datePurchValue)).setText(giftLabel + bundle.getString("purchaseDate"));
     	
     	//set description
     	if(bundle.getString("description")!= null)
     	{
-    		((TextView)findViewById( R.id.descValue)).setText(" "+bundle.getString("description"));	
+    		((TextView)findViewById( R.id.descValue)).setText(bundle.getString("description"));
     	}
     	else
     	{
@@ -226,9 +237,9 @@ public class ViewSomething extends Activity {
     	{
 			BitmapFactory.Options options = new BitmapFactory.Options();
 
-			//options.inSampleSize = 6;
+			options.inSampleSize = 4;
 
-			//options.inDither = true;
+			options.inDither = true;
 
 			//Jul-15 final int THUMBNAIL_SIZE = 64;
 			/*final int THUMBNAIL_SIZE = 128;
@@ -259,7 +270,7 @@ public class ViewSomething extends Activity {
 			int width = size.x;
 			int height = size.y;
 
-			bmp = Bitmap.createScaledBitmap(bmp, width, height, true);
+			bmp = Bitmap.createScaledBitmap(bmp, width, 600, true);
 
 			Drawable d = new BitmapDrawable(getResources(), bmp);
 

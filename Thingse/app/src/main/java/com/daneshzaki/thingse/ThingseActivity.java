@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -61,8 +62,37 @@ public class ThingseActivity extends ListActivity
 		ActionBar actionBar = getActionBar();
 		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#33B5E5")));
 		//fab code
-		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-		fab.attachToListView(thingsList);
+		final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+		fab.setHovered(true);
+		fab.attachToListView(thingsList, new ScrollDirectionListener() {
+			@Override
+			public void onScrollDown() {
+				Log.d("ThingseActivity", "onScrollDown()");
+				fab.show();
+			}
+
+			@Override
+			public void onScrollUp() {
+				Log.d("ThingseActivity", "onScrollUp()");
+				fab.show();
+
+			}
+		}, new AbsListView.OnScrollListener() {
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				Log.d("ThingseActivity", "onScrollStateChanged()");
+				fab.show();
+
+			}
+
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+				Log.d("ThingseActivity", "onScroll()");
+				fab.show();
+
+			}
+		});
+
 
 		fab.setOnClickListener(new View.OnClickListener() {
 			@Override

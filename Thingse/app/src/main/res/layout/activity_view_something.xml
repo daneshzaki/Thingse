@@ -15,53 +15,47 @@
         android:onClick="viewThingFull"
         android:scaleType="center" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
-        android:layout_weight="0.2">
-
-        <TextView
-            android:id="@+id/datePurchLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" Purchased on "
-            android:textSize="16dp"
-            />
+        android:layout_weight="0.2"
+        android:orientation="vertical"
+        android:layout_marginTop="4dp"
+        android:showDividers="beginning">
 
         <TextView
             android:id="@+id/datePurchValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/datePurchLabel"
             android:text="date"
-            android:textSize="16dp" />
-
-        <TextView
-            android:id="@+id/forLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/datePurchValue"
-            android:text=" for "
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            android:textColor="#676767"
+            android:textStyle="bold"
+            android:typeface="normal"
+            android:paddingTop="4dp"
+            android:paddingBottom="2dp"
+            android:layout_marginLeft="2dp"
+            />
 
         <TextView
             android:id="@+id/priceValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/forLabel"
             android:text="price"
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:typeface="normal"
+            android:textColor="#676767"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:layout_marginLeft="2dp"
+            />
 
         <TextView
             android:id="@+id/descValue"
-            android:layout_below="@id/datePurchLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -69,9 +63,13 @@
             android:textSize="16dp"
             android:layout_weight="0.1"
             android:layout_marginLeft="2dp"
-            />
+            android:typeface="normal"
+            android:textColor="#676767"
+            android:textStyle="bold"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
 
 </LinearLayout>

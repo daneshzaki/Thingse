@@ -21,7 +21,6 @@
             android:id="@+id/android:list"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_marginBottom="2dp"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
             android:layout_marginTop="2dp"
@@ -49,14 +48,9 @@
             android:text="@string/main_about"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#D0D0D0"
-
-
             android:layout_marginLeft="4dp"
 
             />
-
-
-
 
         <com.melnykov.fab.FloatingActionButton
             android:id="@+id/fab"
@@ -64,11 +58,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
             android:layout_alignParentBottom="true"
-            android:layout_margin="16dp"
+            android:layout_margin="5dp"
             android:src="@drawable/ic_action_content_new"
             fab:fab_colorNormal="@color/primary"
             fab:fab_colorPressed="@color/primary_pressed"
-            fab:fab_colorRipple="@color/ripple" />
+            fab:fab_colorRipple="@color/ripple"
+            />
 
 
     </LinearLayout>
