@@ -79,7 +79,7 @@
                 android:id="@+id/giftCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_local_florist_black_18dp"
+                android:drawableStart="@drawable/ic_card_giftcard_black_18dp"
                 android:text="Gift?"
                 android:layout_weight="0.35"
                 android:textSize="16dp" />
@@ -142,7 +142,7 @@
             <TextView
                 android:id="@+id/picLabel"
                 android:layout_width="88dp"
-                android:layout_height="47dp"
+                android:layout_height="56dp"
                 android:text="Picture"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#ff000000"

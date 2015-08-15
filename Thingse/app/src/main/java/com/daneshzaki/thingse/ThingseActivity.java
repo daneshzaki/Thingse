@@ -155,7 +155,10 @@ public class ThingseActivity extends ListActivity
 					tv2.setGravity(Gravity.LEFT);
 					tv2.setTextSize(14.0f);
 					tv2.setPadding(5, 10, 5, 10);
-					tv2.setLines(1);
+
+					//Aug 15 2015
+					//tv2.setLines(1);
+					tv2.setLines(3);
 
 					ll = new LinearLayout(getContext());
 					ll.setOrientation(LinearLayout.HORIZONTAL);
@@ -175,8 +178,11 @@ public class ThingseActivity extends ListActivity
 					ll2.addView(tv2, 1);
 
 					tv1.setText(nameArr[position]);
-					tv2.setText(priceArr[position] + " |\t\t"
-							+ purchDateArr[position]);
+
+					//Aug 15 2015
+					//tv2.setText(priceArr[position] + " |\t\t"+ purchDateArr[position]);
+
+					tv2.setText(priceArr[position] + " \n\n" + purchDateArr[position]);
 
 					ll.addView(iv);
 					ll.addView(ll2);
@@ -192,9 +198,11 @@ public class ThingseActivity extends ListActivity
 					displayThingImage(iv, position);
 
 					tv1.setText(nameArr[position]);
-					tv2.setText(priceArr[position] + " |\t\t"
-							+ purchDateArr[position]);
 
+					//Aug 15 2015
+					//tv2.setText(priceArr[position] + " |\t\t"+ purchDateArr[position]);
+
+					tv2.setText(priceArr[position] + " \n\n" + purchDateArr[position]);
 				}
 
 				return ll;
@@ -340,8 +348,8 @@ public class ThingseActivity extends ListActivity
 
 			options.inDither = false;
 
-			//Jul-15 final int THUMBNAIL_SIZE = 64;
-			final int THUMBNAIL_SIZE = 128;
+			//Aug 15 2015 final int THUMBNAIL_SIZE = 64;
+			final int THUMBNAIL_SIZE = 192;
 
 			Bitmap bmp = BitmapFactory.decodeFile(thingImageLocation, options);
 

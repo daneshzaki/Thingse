@@ -207,7 +207,8 @@ public class ViewSomething extends Activity {
     	if(bundle.getString("price").trim().startsWith("Gift :"))
     	{
     		giftLabel = "Received on ";
-    	}
+			((TextView)findViewById( R.id.priceValue)).setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_card_giftcard_black_18dp,0,0,0);
+		}
 		else
 		{
 			giftLabel = "Purchased on ";
