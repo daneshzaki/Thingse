@@ -1,7 +1,7 @@
 <resources>
  <color name="holoblue">#ff33b5e5</color>
  <color name="primary">#ff33b5e5</color>
- <color name="primary_pressed">#ff33b5e5</color>
+ <color name="primary_pressed">#0066ff</color>
  <color name="ripple">#00000000</color>
 
     <color name="black_overlay">#66000000</color>

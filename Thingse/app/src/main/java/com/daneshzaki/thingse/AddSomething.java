@@ -15,6 +15,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -48,17 +49,31 @@ public class AddSomething extends Activity {
 		setContentView(R.layout.activity_add_something);
 
         ActionBar actionBar = getActionBar();
-		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP|ActionBar.DISPLAY_SHOW_TITLE);
+		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
 		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#33B5E5")));
         actionBar.setTitle("Add something new");
         actionBar.setHomeButtonEnabled(true);
 
+		//set fonts for all text
+		Typeface typeface = Typeface.createFromAsset(getResources().getAssets(), "SourceSansPro-Regular.otf");
+		((EditText)findViewById( R.id.thingField)).setTypeface(typeface);
+		((EditText)findViewById( R.id.priceField)).setTypeface(typeface);
+		((EditText)findViewById( R.id.descField)).setTypeface(typeface);
+		((CheckBox)findViewById( R.id.giftCheck)).setTypeface(typeface);
+		((TextView)findViewById( R.id.picLabel)).setTypeface(typeface);
 
-        //set currency selected by user in price label 
+		((Button)findViewById( R.id.datePurchField)).setTypeface(typeface);
+		((Button)findViewById( R.id.datePurchField)).setAllCaps(false);
+		((Button)findViewById( R.id.uploadButton)).setTypeface(typeface);
+		((Button)findViewById( R.id.cameraButton)).setTypeface(typeface);
+		((TextView)findViewById( R.id.picLocation)).setTypeface(typeface);
+
+		//set currency selected by user in price label
 		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		((TextView)findViewById( R.id.priceField)).setHint("Price (" + sharedPrefs.getString("currencyPref", "Rs.") + ")");
-        
-        //create the date dialog
+		((TextView)findViewById( R.id.priceField)).setTypeface(typeface);
+
+		//create the date dialog
         newFragment = new DatePickerFragment();
         
         //if the activity was destroyed before completion restore input values
@@ -85,11 +100,12 @@ public class AddSomething extends Activity {
 	    	}
 	    	
 	    	//purchased date
-	    	((Button)findViewById( R.id.datePurchField)).setText(savedInstanceState.getString("purchaseDate"));    	
-	    	
-	    	//description
+	    	((Button)findViewById( R.id.datePurchField)).setText(savedInstanceState.getString("purchaseDate"));
+
+			//description
 	    	((EditText)findViewById( R.id.descField)).setText(savedInstanceState.getString("description"));
-	    	
+
+
         }
     }
 

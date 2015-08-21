@@ -16,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,6 +25,10 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 //This class is used to display and store the preferences 
@@ -45,7 +50,6 @@ public class Preferences extends PreferenceActivity
 		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
 		actionBar.setHomeButtonEnabled(true);
 
-		
 		//instantiate db adapter and open db
 		adapter = new SQLAdapter(this);
 		adapter.open();
@@ -54,6 +58,7 @@ public class Preferences extends PreferenceActivity
 		
 		// about dialog
 		Preference aboutPref = (Preference) findPreference("aboutPref");
+
 		aboutPref.setOnPreferenceClickListener(new OnPreferenceClickListener()
 		{
 
@@ -126,7 +131,7 @@ public class Preferences extends PreferenceActivity
 				writeContentToFile(records.toString(),"thingse.csv");
 				
 				//display toast with status  
-		    	Toast.makeText(getBaseContext(), "Contents exported successfully", Toast.LENGTH_SHORT).show();				
+		    	Toast.makeText(getBaseContext(), "Contents successfully exported to "+exportFileLocation, Toast.LENGTH_SHORT).show();
 				return true;
 			}
 		}
@@ -252,14 +257,15 @@ public class Preferences extends PreferenceActivity
 	{
 		// create a file if it does not exist
 		File exportFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + fileName);
-		
+		exportFileLocation = exportFile.getAbsolutePath();
+
 		// check if file exists
 		if (!exportFile.exists())
 		{
 			try
 			{
 				exportFile.createNewFile();
-				Log.i("Preferences", "file created with name - " + exportFile.getAbsolutePath());
+				Log.i("Preferences", "file created with name - " + exportFileLocation);
 			} catch (IOException e)
 			{
 				Log.e("Preferences", "***unable to create file  " + e.getMessage(), e);
@@ -267,7 +273,7 @@ public class Preferences extends PreferenceActivity
 			}
 		}
 
-		Log.i("Preferences", "file exists with name - " + exportFile.getAbsolutePath());
+		Log.i("Preferences", "file exists with name - " + exportFileLocation);
 		// write to the file
 		try
 		{
@@ -319,4 +325,7 @@ public class Preferences extends PreferenceActivity
 
     //database adapter
     private SQLAdapter adapter = null;
+
+	//export file location
+	private String exportFileLocation = "";
 }

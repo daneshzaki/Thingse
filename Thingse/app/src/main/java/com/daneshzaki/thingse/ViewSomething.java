@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -207,7 +208,7 @@ public class ViewSomething extends Activity {
     	if(bundle.getString("price").trim().startsWith("Gift :"))
     	{
     		giftLabel = "Received on ";
-			((TextView)findViewById( R.id.priceValue)).setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_card_giftcard_black_18dp,0,0,0);
+			((TextView)findViewById( R.id.priceValue)).setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_gift,0,0,0);
 		}
 		else
 		{
@@ -215,6 +216,8 @@ public class ViewSomething extends Activity {
 
 			//set currency chosen by user
 			currencyLabel = sharedPrefs.getString("currencyPref", "Rs.");
+			((TextView)findViewById( R.id.priceValue)).setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_price,0,0,0);
+
 		}
     	
     	//set price
@@ -224,15 +227,22 @@ public class ViewSomething extends Activity {
     	((TextView)findViewById( R.id.datePurchValue)).setText(giftLabel + bundle.getString("purchaseDate"));
     	
     	//set description
-    	if(bundle.getString("description")!= null)
+    	if(bundle.getString("description")!= null && bundle.getString("description").trim().length()>0)
     	{
     		((TextView)findViewById( R.id.descValue)).setText(bundle.getString("description"));
     	}
     	else
     	{
-    		((TextView)findViewById( R.id.descValue)).setText(" ");
+    		((TextView)findViewById( R.id.descValue)).setText("One of the many things that I have");
     	}
-    	
+
+
+		//set fonts for all text
+		Typeface typeface = Typeface.createFromAsset( getResources().getAssets(), "SourceSansPro-Regular.otf");
+		((TextView)findViewById( R.id.datePurchValue)).setTypeface(typeface);
+		((TextView)findViewById( R.id.priceValue)).setTypeface(typeface);
+		((TextView)findViewById( R.id.descValue)).setTypeface(typeface);
+
     	//scale and set pic 
     	if(bundle.getString("picLocation")!= null && bundle.getString("picLocation").trim().length()>0)
     	{

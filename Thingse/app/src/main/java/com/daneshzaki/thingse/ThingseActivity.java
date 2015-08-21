@@ -44,6 +44,7 @@ public class ThingseActivity extends ListActivity
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_ACTION_BAR);
 		this.getWindow().setNavigationBarColor(Color.parseColor("#D0D0D0"));
+
 		setContentView(R.layout.activity_thingse);
 		Log.i("ThingseActivity", "ThingseActivity onCreate");
 
@@ -60,20 +61,23 @@ public class ThingseActivity extends ListActivity
 		thingsList.setDividerHeight(1);
 
 		ActionBar actionBar = getActionBar();
+
 		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#33B5E5")));
+
+
 		//fab code
 		final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 		fab.setHovered(true);
 		fab.attachToListView(thingsList, new ScrollDirectionListener() {
 			@Override
 			public void onScrollDown() {
-				Log.d("ThingseActivity", "onScrollDown()");
+				//Log.d("ThingseActivity", "onScrollDown()");
 				fab.show();
 			}
 
 			@Override
 			public void onScrollUp() {
-				Log.d("ThingseActivity", "onScrollUp()");
+				//Log.d("ThingseActivity", "onScrollUp()");
 				fab.show();
 
 			}
@@ -87,7 +91,7 @@ public class ThingseActivity extends ListActivity
 
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-				Log.d("ThingseActivity", "onScroll()");
+				//Log.d("ThingseActivity", "onScroll()");
 				fab.show();
 
 			}
@@ -133,6 +137,9 @@ public class ThingseActivity extends ListActivity
 
 				LinearLayout ll, ll2;
 
+				//set fonts for all text
+				Typeface typeface = Typeface.createFromAsset( getResources().getAssets(), "SourceSansPro-Regular.otf");
+
 				if (convertView == null)
 				{
 					iv = new ImageView(getContext());
@@ -142,7 +149,7 @@ public class ThingseActivity extends ListActivity
 					//iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
 					tv1 = new TextView(getContext());
-					tv1.setTypeface(null, Typeface.BOLD);
+					tv1.setTypeface(typeface, Typeface.BOLD);
 					tv1.setGravity(Gravity.LEFT);
 					tv1.setTextSize(18.0f);
 					//tv1.setTextColor(android.graphics.Color.parseColor("#33B5E5"));
@@ -155,7 +162,7 @@ public class ThingseActivity extends ListActivity
 					tv2.setGravity(Gravity.LEFT);
 					tv2.setTextSize(14.0f);
 					tv2.setPadding(5, 10, 5, 10);
-
+					tv2.setTypeface(typeface);
 					//Aug 15 2015
 					//tv2.setLines(1);
 					tv2.setLines(3);
@@ -193,7 +200,8 @@ public class ThingseActivity extends ListActivity
 					ll2 = (LinearLayout) (ll.getChildAt(1));
 					tv1 = (TextView) (ll2.getChildAt(0));
 					tv2 = (TextView) (ll2.getChildAt(1));
-
+					tv1.setTypeface(typeface, Typeface.BOLD);
+					tv2.setTypeface(typeface);
 					// display thing image
 					displayThingImage(iv, position);
 

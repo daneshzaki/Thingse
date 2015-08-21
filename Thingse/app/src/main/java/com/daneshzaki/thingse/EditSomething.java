@@ -15,6 +15,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -303,7 +304,21 @@ public class EditSomething extends Activity {
         actionBar.setHomeButtonEnabled(true);
 		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
 
-    	//gift check
+		//set fonts for all text
+		Typeface typeface = Typeface.createFromAsset(getResources().getAssets(), "SourceSansPro-Regular.otf");
+		((EditText)findViewById( R.id.thingField)).setTypeface(typeface);
+		((EditText)findViewById( R.id.priceField)).setTypeface(typeface);
+		((EditText)findViewById( R.id.descField)).setTypeface(typeface);
+		((CheckBox)findViewById( R.id.giftCheck)).setTypeface(typeface);
+		((TextView)findViewById( R.id.picLabel)).setTypeface(typeface);
+
+		((Button)findViewById( R.id.datePurchField)).setTypeface(typeface);
+		((Button)findViewById( R.id.datePurchField)).setAllCaps(false);
+		((Button)findViewById( R.id.uploadButton)).setTypeface(typeface);
+		((Button)findViewById( R.id.cameraButton)).setTypeface(typeface);
+		((TextView)findViewById( R.id.picLocation)).setTypeface(typeface);
+
+		//gift check
     	if(bundle.getString("price").trim().startsWith("Gift :"))
     	{
     		((TextView)findViewById( R.id.datePurchField)).setText("Received on ");

@@ -79,7 +79,7 @@
                 android:id="@+id/giftCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_card_giftcard_black_18dp"
+                android:drawableStart="@drawable/ic_gift_black"
                 android:text="Gift?"
                 android:layout_weight="0.35"
                 android:textSize="16dp" />
@@ -159,6 +159,7 @@
                 android:tag="Select from gallery"
                 android:text="Choose"
                 android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#ff000000"
                 android:textSize="16dp" />
 
             <Button
@@ -172,6 +173,7 @@
                 android:tag="Take picture"
                 android:text="Click"
                 android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#ff000000"
                 android:textSize="16dp" />
         </LinearLayout>
     </TableRow>
