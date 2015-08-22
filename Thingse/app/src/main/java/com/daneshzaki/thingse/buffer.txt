@@ -309,3 +309,26 @@
                 fab:fab_colorRipple="@color/ripple" />
 
 </FrameLayout>
+
+//--Aug 22
+        <ListView
+            android:id="@+id/android:list"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_weight="2"
+            android:background="#fff3f3f3"
+            android:clickable="true"
+            android:columnWidth="0dp"
+            android:drawSelectorOnTop="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:numColumns="2"
+            android:selectAllOnFocus="true"
+            android:text=" "
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#000000"
+            android:textSize="13dp" />
