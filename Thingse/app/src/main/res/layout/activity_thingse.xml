@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:ignore="HardcodedText" >
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/tableLayout1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -17,40 +17,16 @@
         android:layout_marginTop="2dp"
         android:orientation="vertical" >
 
-        <ListView
-            android:id="@+id/android:list"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_weight="2"
-            android:background="#fff3f3f3"
-            android:clickable="true"
-            android:columnWidth="0dp"
-            android:drawSelectorOnTop="true"
-            android:enabled="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:numColumns="2"
-            android:selectAllOnFocus="true"
-            android:text=" "
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#000000"
-            android:textSize="13dp" />
-
-        <TextView
-            android:id="@android:id/empty"
+        <com.etsy.android.grid.StaggeredGridView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/grid_view"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:background="#fff3f3f3"
-            android:gravity="center"
-            android:text="@string/main_about"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#D0D0D0"
-            android:layout_marginLeft="4dp"
+            android:layout_height="match_parent"
+            app:item_margin="0dp"
+            app:column_count="2"
+            android:background="@drawable/ic_launcher" />
 
-            />
 
         <com.melnykov.fab.FloatingActionButton
             android:id="@+id/fab"
@@ -66,6 +42,6 @@
             />
 
 
-    </LinearLayout>
+    </FrameLayout>
 
 </RelativeLayout>

@@ -15,8 +15,9 @@
         android:text="Thingse"
         android:id="@+id/title"
         android:layout_gravity="center_horizontal|bottom"
-        android:textColor="@color/holoblue"
-        android:gravity="center_horizontal|bottom" />
+        android:textColor="#0051ab"
+        android:gravity="center_horizontal|bottom"
+        android:textStyle="bold" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="36dp"
@@ -39,7 +40,8 @@
         android:id="@+id/description"
         android:layout_gravity="bottom|center_horizontal"
         android:text="Thingse keeps track of the things you have purchased or received as gifts."
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small" />
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+         />
 
     <TextView
         android:layout_width="184dp"

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,17 +26,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 //import android.support.design.widget.FloatingActionButton;
+import com.etsy.android.grid.StaggeredGridView;
 import com.melnykov.fab.*;
 
 //This class corresponds to the main screen that is displayed when the Thingse application is opened
 //This class displays the list of things from the database and serves as the navigation point to other screens
-public class ThingseActivity extends ListActivity
+public class ThingseActivity extends Activity implements AdapterView.OnItemClickListener
 {
 
 	@Override
@@ -48,22 +52,90 @@ public class ThingseActivity extends ListActivity
 		setContentView(R.layout.activity_thingse);
 		Log.i("ThingseActivity", "ThingseActivity onCreate");
 
-		// get the list view for this activity
-		ListView thingsList = getListView();
+		// get the grid view for this activity
+		StaggeredGridView thingsList = (StaggeredGridView)findViewById(R.id.grid_view);
 
 		thingsList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
 		thingsList.setTextFilterEnabled(true);
 
-		// set divider color to holo blue
-		//thingsList.setDivider(new ColorDrawable(this.getResources().getColor(R.color.holoblue)));
-		thingsList.setDivider(new ColorDrawable(Color.LTGRAY));
-		thingsList.setDividerHeight(1);
-
 		ActionBar actionBar = getActionBar();
 
 		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#33B5E5")));
 
+		// retrieving things from db
+		ArrayList<String[]> dispThingsArList = getThings();
+
+		// get name Arr
+		final String[] nameArr = dispThingsArList.get(0);
+
+		// get price Arr
+		final String[] priceArr = dispThingsArList.get(1);
+
+		// get purchDate Arr
+		final String[] purchDateArr = dispThingsArList.get(2);
+
+		// create an adapter with custom style for text
+		ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_checked, nameArr)
+		{
+
+			// layout for image and two text views
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent)
+			{
+				ImageView iv;
+				TextView tv1;
+
+				FrameLayout ll;
+
+				//set fonts for all text
+				Typeface typeface = Typeface.createFromAsset( getResources().getAssets(), "SourceSansPro-Regular.otf");
+
+				if (convertView == null)
+				{
+					iv = new ImageView(getContext());
+					iv.setAdjustViewBounds(true);
+					//iv.setPadding(5, 10, 5, 10);
+					iv.setPadding(20, 20, 20, 20);
+					//uncomment the line below if thumbnails are of different sizes
+					//iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+					tv1 = new TextView(getContext());
+					tv1.setTypeface(typeface, Typeface.BOLD);
+					tv1.setGravity(Gravity.BOTTOM);
+					tv1.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+					tv1.setPadding(20, 20, 20, 22);
+					tv1.setTextSize(16.0f);
+					tv1.setTextColor(android.graphics.Color.parseColor("#fff3f3f3"));
+					tv1.setText(nameArr[position]);
+
+					ll = new FrameLayout(getContext());
+					ll.setBackgroundColor(android.graphics.Color.parseColor("#fff3f3f3"));
+					// display thing image
+					displayThingImage(iv, position);
+
+					ll.addView(iv);
+					ll.addView(tv1);
+
+				} else
+				{
+					ll = (FrameLayout) convertView;
+					iv = (ImageView) ll.getChildAt(0);
+					tv1 = (TextView) (ll.getChildAt(1));
+					tv1.setTypeface(typeface, Typeface.BOLD);
+					// display thing image
+					displayThingImage(iv, position);
+					tv1.setText(nameArr[position]);
+				}
+
+				return ll;
+			}
+		};
+
+		thingsList.setAdapter(listAdapter);
+		thingsList.setOnItemClickListener(this);
 
 		//fab code
 		final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -101,129 +173,17 @@ public class ThingseActivity extends ListActivity
 		fab.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//Write here anything that you wish to do on click of FAB
-
 				// Code to Add an item
 				Log.i("ThingseActivity", "FAB clicked");
 				startActivity(new Intent(ThingseActivity.this, AddSomething.class));
-
-				//Ends Here
 			}
 		});
-
-		// retrieving things from db
-		ArrayList<String[]> dispThingsArList = getThings();
-
-		// get name Arr
-		final String[] nameArr = dispThingsArList.get(0);
-
-		// get price Arr
-		final String[] priceArr = dispThingsArList.get(1);
-
-		// get purchDate Arr
-		final String[] purchDateArr = dispThingsArList.get(2);
-
-		// create an adapter with custom style for text
-		ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_checked, nameArr)
-		{
-
-			// layout for image and two text views
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent)
-			{
-				ImageView iv;
-				TextView tv1, tv2;
-
-				LinearLayout ll, ll2;
-
-				//set fonts for all text
-				Typeface typeface = Typeface.createFromAsset( getResources().getAssets(), "SourceSansPro-Regular.otf");
-
-				if (convertView == null)
-				{
-					iv = new ImageView(getContext());
-					iv.setPadding(5, 10, 5, 10);
-					
-					//uncomment the line below if thumbnails are of different sizes
-					//iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-					tv1 = new TextView(getContext());
-					tv1.setTypeface(typeface, Typeface.BOLD);
-					tv1.setGravity(Gravity.LEFT);
-					tv1.setTextSize(18.0f);
-					//tv1.setTextColor(android.graphics.Color.parseColor("#33B5E5"));
-					tv1.setPadding(5, 10, 5, 10);
-					tv1.setLines(1);
-
-
-					// second line text view
-					tv2 = new TextView(getContext());
-					tv2.setGravity(Gravity.LEFT);
-					tv2.setTextSize(14.0f);
-					tv2.setPadding(5, 10, 5, 10);
-					tv2.setTypeface(typeface);
-					//Aug 15 2015
-					//tv2.setLines(1);
-					tv2.setLines(3);
-
-					ll = new LinearLayout(getContext());
-					ll.setOrientation(LinearLayout.HORIZONTAL);
-					ll.setBackgroundColor(android.graphics.Color
-							.parseColor("#fff3f3f3"));
-
-					// display thing image
-					displayThingImage(iv, position);
-
-					// layout for text views
-					ll2 = new LinearLayout(getContext());
-					ll2.setOrientation(LinearLayout.VERTICAL);
-					ll2.setBackgroundColor(android.graphics.Color
-							.parseColor("#fff3f3f3"));
-					ll2.addView(tv1, 0);
-
-					ll2.addView(tv2, 1);
-
-					tv1.setText(nameArr[position]);
-
-					//Aug 15 2015
-					//tv2.setText(priceArr[position] + " |\t\t"+ purchDateArr[position]);
-
-					tv2.setText(priceArr[position] + " \n\n" + purchDateArr[position]);
-
-					ll.addView(iv);
-					ll.addView(ll2);
-				} else
-				{
-					ll = (LinearLayout) convertView;
-					iv = (ImageView) ll.getChildAt(0);
-					ll2 = (LinearLayout) (ll.getChildAt(1));
-					tv1 = (TextView) (ll2.getChildAt(0));
-					tv2 = (TextView) (ll2.getChildAt(1));
-					tv1.setTypeface(typeface, Typeface.BOLD);
-					tv2.setTypeface(typeface);
-					// display thing image
-					displayThingImage(iv, position);
-
-					tv1.setText(nameArr[position]);
-
-					//Aug 15 2015
-					//tv2.setText(priceArr[position] + " |\t\t"+ purchDateArr[position]);
-
-					tv2.setText(priceArr[position] + " \n\n" + purchDateArr[position]);
-				}
-
-				return ll;
-			}
-		};
-
-		setListAdapter(listAdapter);
 
 		Log.i("ThingseActivity", "ThingseActivity exit onCreate");
 	}
 
 	// handle row selects
-	public void onListItemClick(ListView parent, View v, int position, long id)
+	public void onItemClick(AdapterView<?> adapterView, View v, int position, long id)
 	{
 		// call display thing with values of selected object
 
@@ -350,14 +310,14 @@ public class ThingseActivity extends ListActivity
 		{
 			BitmapFactory.Options options = new BitmapFactory.Options();
 
-			options.inSampleSize = 12;
+			options.inSampleSize = 6;
 
 			options.inPurgeable = true;
 
 			options.inDither = false;
 
 			//Aug 15 2015 final int THUMBNAIL_SIZE = 64;
-			final int THUMBNAIL_SIZE = 192;
+			final int THUMBNAIL_SIZE = 256;
 
 			Bitmap bmp = BitmapFactory.decodeFile(thingImageLocation, options);
 
