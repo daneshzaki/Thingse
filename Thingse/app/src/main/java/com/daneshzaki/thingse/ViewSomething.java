@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import android.app.ActionBar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 //This class corresponds to the View screen that is called when a "Thing" is selected from the main screen
 public class ViewSomething extends Activity {
@@ -57,6 +58,14 @@ public class ViewSomething extends Activity {
 	public void viewThingFull(View v)
 	{
 		Log.i("ViewSomething", "*** viewThingFull ***");
+
+		//do not open full screen if there is no image
+		if(bundle.getString("picLocation")== null || bundle.getString("picLocation").trim().length()==0)
+		{
+			//show Toast
+			Toast.makeText(getBaseContext(), "No pic associated with this thing", Toast.LENGTH_SHORT).show();
+			return;
+		}
 
 		//create an intent and add the bundle to it
 		Intent viewFullIntent = new Intent(this, ViewFullscreen.class);
@@ -242,7 +251,7 @@ public class ViewSomething extends Activity {
 		((TextView)findViewById( R.id.datePurchValue)).setTypeface(typeface);
 		((TextView)findViewById( R.id.priceValue)).setTypeface(typeface);
 		((TextView)findViewById( R.id.descValue)).setTypeface(typeface);
-
+		ImageView thingImage = ((ImageView)findViewById(R.id.thingImage));
     	//scale and set pic 
     	if(bundle.getString("picLocation")!= null && bundle.getString("picLocation").trim().length()>0)
     	{
@@ -285,7 +294,7 @@ public class ViewSomething extends Activity {
 
 			Drawable d = new BitmapDrawable(getResources(), bmp);
 
-			ImageView thingImage = ((ImageView)findViewById(R.id.thingImage));
+
 
 			//thingImage.setScaleX(0.75f);
 			//thingImage.setScaleY(0.75f);
@@ -294,11 +303,11 @@ public class ViewSomething extends Activity {
     	}
     	else
     	{
-    		//set a one pixel image if there is no associated pic with this thing
-			ImageView thingImage = ((ImageView)findViewById(R.id.thingImage));
+    		//set default image if there is no associated pic with this thing
+
 			thingImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0.1f));
 
-			//((ImageView)findViewById(R.id.thingImage)).setImageResource(R.drawable.onepixel);
+			thingImage.setImageResource(R.drawable.ic_launcher);
 
     	}
     	

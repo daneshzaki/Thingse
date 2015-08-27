@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -20,7 +22,7 @@ import android.widget.LinearLayout;
  * Full-screen activity that displays the image full screen
  *
  */
-public class ViewFullscreen extends Activity {
+public class ViewFullscreen extends Activity implements View.OnTouchListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -53,7 +55,8 @@ public class ViewFullscreen extends Activity {
 
         Log.i("ViewFullScreen", "bundle is " + bundle.toString());
 
-
+        ImageView thingImage = ((ImageView)findViewById(R.id.thingImage));
+        thingImage.setOnTouchListener(this);
         //scale and set pic
         if(bundle.getString("picLocation")!= null && bundle.getString("picLocation").trim().length()>0)
         {
@@ -71,22 +74,25 @@ public class ViewFullscreen extends Activity {
             bmp = Bitmap.createScaledBitmap(bmp, width, height, true);
 
             Drawable d = new BitmapDrawable(getResources(), bmp);
-            ((ImageView)findViewById(R.id.thingImage)).setImageDrawable(d);
+            thingImage.setImageDrawable(d);
 
         }
         else
         {
-            //set a one pixel image if there is no associated pic with this thing
-            ImageView thingImage = ((ImageView)findViewById(R.id.thingImage));
+            //set a default image if there is no associated pic with this thing
             thingImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0.1f));
 
-            //((ImageView)findViewById(R.id.thingImage)).setImageResource(R.drawable.onepixel);
+            thingImage.setImageResource(R.drawable.ic_launcher);
 
         }
 
     }
 
-
+    public boolean onTouch(View view, MotionEvent motionEvent)
+    {
+        finish();
+        return false;
+    }
 
     //bundle for passing the bitmap
     private Bundle bundle = null;

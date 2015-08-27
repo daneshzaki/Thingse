@@ -59,6 +59,9 @@ public class ThingseActivity extends Activity implements AdapterView.OnItemClick
 
 		thingsList.setTextFilterEnabled(true);
 
+		//set fonts for all text
+		typeface = Typeface.createFromAsset( getResources().getAssets(), "SourceSansPro-Regular.otf");
+
 		ActionBar actionBar = getActionBar();
 
 		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#33B5E5")));
@@ -66,8 +69,21 @@ public class ThingseActivity extends Activity implements AdapterView.OnItemClick
 		// retrieving things from db
 		ArrayList<String[]> dispThingsArList = getThings();
 
+		//set empty
+		TextView emptyView = (TextView)findViewById(R.id.empty);
+		emptyView.setTypeface(typeface);
+
 		// get name Arr
 		final String[] nameArr = dispThingsArList.get(0);
+
+		Log.i("ThingseActivity","nameArr "+nameArr);
+
+		if(nameArr != null && nameArr.length>0)
+		{
+			Log.i("ThingseActivity","empty check false");
+			emptyView.setText("");
+		}
+
 
 		// get price Arr
 		final String[] priceArr = dispThingsArList.get(1);
@@ -89,15 +105,12 @@ public class ThingseActivity extends Activity implements AdapterView.OnItemClick
 
 				FrameLayout ll;
 
-				//set fonts for all text
-				Typeface typeface = Typeface.createFromAsset( getResources().getAssets(), "SourceSansPro-Regular.otf");
-
 				if (convertView == null)
 				{
 					iv = new ImageView(getContext());
 					iv.setAdjustViewBounds(true);
 					//iv.setPadding(5, 10, 5, 10);
-					iv.setPadding(20, 20, 20, 20);
+					iv.setPadding(5, 5, 5, 5);
 					//uncomment the line below if thumbnails are of different sizes
 					//iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
@@ -106,7 +119,13 @@ public class ThingseActivity extends Activity implements AdapterView.OnItemClick
 					tv1.setGravity(Gravity.BOTTOM);
 					tv1.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
-					tv1.setPadding(20, 20, 20, 22);
+					/*tv1.setLayoutParams(new LinearLayout.LayoutParams(48, -2));
+					ViewGroup.LayoutParams layoutParams = tv1.getLayoutParams();
+					layoutParams.height = 48;
+					layoutParams.width = layoutParams.MATCH_PARENT;
+					tv1.setBackgroundColor(Color.LTGRAY);*/
+
+					tv1.setPadding(7, 5, 5, 7);
 					tv1.setTextSize(16.0f);
 					tv1.setTextColor(android.graphics.Color.parseColor("#fff3f3f3"));
 					tv1.setText(nameArr[position]);
@@ -136,6 +155,7 @@ public class ThingseActivity extends Activity implements AdapterView.OnItemClick
 
 		thingsList.setAdapter(listAdapter);
 		thingsList.setOnItemClickListener(this);
+
 
 		//fab code
 		final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -293,7 +313,7 @@ public class ThingseActivity extends Activity implements AdapterView.OnItemClick
 		} else
 		{
 			// set default pic if there is no associated pic with this thing
-			imageView.setImageResource(R.drawable.onepixel);
+			imageView.setImageResource(R.drawable.ic_launcher);
 
 		}
 
@@ -461,5 +481,8 @@ public class ThingseActivity extends Activity implements AdapterView.OnItemClick
 
 	// masterThings array list holding all things
 	ArrayList<Thing> thingsArList = null;
+
+	//typeface for text views
+	Typeface typeface = null;
 
 }

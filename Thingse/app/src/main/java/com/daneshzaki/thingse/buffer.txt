@@ -224,11 +224,7 @@ This is a temporary buffer file used to hold changing code - ignore this file
             android:text="@string/main_about"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#D0D0D0"
-
-
-            android:layout_marginLeft="4dp"
-
-            />
+            android:layout_marginLeft="4dp"/>
 
 
 
