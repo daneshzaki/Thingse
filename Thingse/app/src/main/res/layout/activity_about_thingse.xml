@@ -28,8 +28,8 @@
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small" />
 
     <ImageView
-        android:layout_width="184dp"
-        android:layout_height="184dp"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:id="@+id/imageView"
         android:layout_gravity="center|bottom"
         android:src="@drawable/ic_launcher" />

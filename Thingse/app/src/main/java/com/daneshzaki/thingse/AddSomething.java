@@ -1,6 +1,12 @@
 package com.daneshzaki.thingse;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -163,8 +169,7 @@ public class AddSomething extends Activity {
     	//Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
     	Intent intent = new Intent(Intent.ACTION_PICK);
     	intent.addCategory(Intent.CATEGORY_DEFAULT);
-    	intent.setDataAndType(
-    			Uri.fromFile(new File( Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"/")),"*/*");
+		intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/")), "*/*");
     	
     	startActivityForResult(intent, CHOOSE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
@@ -293,10 +298,15 @@ public class AddSomething extends Activity {
             if (resultCode == RESULT_OK) 
             {            	
             	//parse and retrieve the selected image's location
-            	picLocation = getFilePathFromContentUri(Uri.parse(data.getDataString()),this.getContentResolver());
+				String selPicLocation = "";
+            	selPicLocation = getFilePathFromContentUri(Uri.parse(data.getDataString()),this.getContentResolver());
 
-        		Log.i("AddSomething", "selected image location is " + picLocation);
-        		
+        		Log.i("AddSomething", "selected image location is " + selPicLocation);
+
+				//28-aug-2015
+				//copy selected image to thingse folder
+				picLocation = copySelectedImageToThingse(selPicLocation);
+
             	// Image chosen path            
             	Toast.makeText(this, "Image selected is :\n" + picLocation, Toast.LENGTH_SHORT).show();
             	
@@ -340,8 +350,73 @@ public class AddSomething extends Activity {
     		
     	}
     }
-    
-    //get the image location from the media content provider (gallery)
+
+	//28-Aug-2015
+	//copy image selected to thingse folder
+	private String copySelectedImageToThingse(String selPicLocation)
+	{
+		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), ".Thingse");
+
+		// Create the storage directory if it does not exist
+		if (! mediaStorageDir.exists())
+		{
+			if (! mediaStorageDir.mkdirs())
+			{
+				Log.d("AddSomething", "failed to create directory");
+				return null;
+			}
+		}
+
+		//create a nomedia file to show
+		try
+		{
+			File noMedia = new File(mediaStorageDir.getPath() + ".nomedia");
+
+			if(!noMedia.exists())
+			{
+				FileWriter f = new FileWriter(noMedia);
+			}
+
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		// Create a media file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+		File destination = new File(mediaStorageDir.getPath() + File.separator + "IMG_"+ timeStamp + ".jpg");
+
+		picLocation = destination.getAbsolutePath();
+
+		try
+		{
+			File source = new File(selPicLocation);
+
+			//if src file exists
+			if (source.exists())
+			{
+				//copy from src to dst file
+				FileChannel src = new FileInputStream(source).getChannel();
+				FileChannel dst = new FileOutputStream(destination).getChannel();
+				dst.transferFrom(src, 0, src.size());
+				src.close();
+				dst.close();
+			}
+		}
+			catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		Log.i("AddSomething", "getOutputMediaFileUri file created"+picLocation);
+
+		return picLocation;
+
+
+	}
+		//get the image location from the media content provider (gallery)
     private String getFilePathFromContentUri(Uri selectedImageUri, ContentResolver contentResolver) 
     {
         String filePath;
@@ -464,8 +539,8 @@ public class AddSomething extends Activity {
     // Create a file Uri for saving image captured 
     private static Uri getOutputMediaFileUri()
     {
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Thingse");
-        
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), ".Thingse");
+
         // Create the storage directory if it does not exist
         if (! mediaStorageDir.exists())
         {
@@ -476,10 +551,29 @@ public class AddSomething extends Activity {
             }
         }
 
-        // Create a media file name
+		//create a nomedia file to show
+		try
+		{
+			File noMedia = new File(mediaStorageDir.getPath() + ".nomedia");
+
+			if(!noMedia.exists())
+			{
+				FileWriter f = new FileWriter(noMedia);
+			}
+
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		// Create a media file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         
         File mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_"+ timeStamp + ".jpg");
+
+		//28-Aug-2015
+		picLocation = mediaFile.getAbsolutePath();
          
         Log.i("AddSomething", "getOutputMediaFileUri file created"+mediaFile.getAbsolutePath());
         
@@ -508,7 +602,7 @@ public class AddSomething extends Activity {
     }
     
     //picture location
-    private String picLocation = "";
+    private static String picLocation = "";
     
     //thing name
     private String thing ="";    

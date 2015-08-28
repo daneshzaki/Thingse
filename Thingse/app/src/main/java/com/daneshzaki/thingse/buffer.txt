@@ -1,4 +1,3 @@
-This is a temporary buffer file used to hold changing code - ignore this file
 // activity_view_something.xml
 <LinearLayout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
