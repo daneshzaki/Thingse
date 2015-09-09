@@ -5,7 +5,8 @@ Source and executable for Thingse Android app
 
 This app uses icons from http://www.icons4android.com/, Etsy's AndroidStaggeredGrid available at https://github.com/etsy/AndroidStaggeredGrid. It also uses the FloatingActionButton library from makovkastar. The license below is mentioned for its usage.
 
-License
+Licenses and Credits
+---------------------
 
 The MIT License (MIT)
 
