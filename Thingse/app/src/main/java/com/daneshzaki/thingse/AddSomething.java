@@ -1,5 +1,7 @@
 package com.daneshzaki.thingse;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,6 +19,7 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -42,6 +45,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.soundcloud.android.crop.Crop;
+import com.soundcloud.android.crop.CropImageActivity;
 
 public class AddSomething extends Activity {
 
@@ -148,15 +154,31 @@ public class AddSomething extends Activity {
     	
     	// create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+		//set camera orientation
+		intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         
         // create a file to save the image
         fileUri = getOutputMediaFileUri();
-        
+
+		//30-aug-15
+		Log.i("AddSomething", "fileUri = "+fileUri);
+
+		picLocation = fileUri.toString();
+
+		Log.i("AddSomething", "picLocation = " + picLocation);
+
         // set the image file name
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); 
-        
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+
+		//crop the image
+		Crop.of(fileUri, fileUri).asSquare().start(this);
+
+		//16 Sep 2015 - compress image
+		compressFile(mediaFile);
+
         // start the image capture Intent
-        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+		startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     	
     }
 
@@ -170,7 +192,8 @@ public class AddSomething extends Activity {
     	Intent intent = new Intent(Intent.ACTION_PICK);
     	intent.addCategory(Intent.CATEGORY_DEFAULT);
 		intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/")), "*/*");
-    	
+		//Log.i("AddSomething", "Calling crop...");
+
     	startActivityForResult(intent, CHOOSE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
     
@@ -241,12 +264,17 @@ public class AddSomething extends Activity {
     //handle return from camera or gallery (for choose pic)    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) 
-    {    	    	
-    	//if returning from camera
+    {
+		Log.i("AddSomething", "request code=" + requestCode);
+		Log.i("AddSomething", "result code=" + resultCode);
+
+		//if returning from camera
     	if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) 
         {
             if (resultCode == RESULT_OK) 
             {
+        		//6 Sep 2015
+
             	picLocation = fileUri.toString().replaceFirst("file://", "");
             	            	
             	Log.i("AddSomething", "*** picLocation = " + picLocation);
@@ -255,29 +283,9 @@ public class AddSomething extends Activity {
             
             	Toast.makeText(this, "Image saved to:\n" + picLocation, Toast.LENGTH_SHORT).show();
 
-				//Jul15
-				//((TextView)findViewById(R.id.picLocation)).setText("Image captured!");
-
+				//6 Sep 2015
 				//scale and set pic
-				if(picLocation != null && picLocation.trim().length()>0)
-				{
-					BitmapFactory.Options options = new BitmapFactory.Options();
-
-					//setting to 1/16th of the original size
-					options.inSampleSize = 16;
-
-					Bitmap bmp = BitmapFactory.decodeFile(picLocation, options);
-
-					Drawable d = new BitmapDrawable(getResources(), bmp);
-
-					((ImageView)findViewById(R.id.picSelected)).setImageDrawable(d);
-				}
-				else
-				{
-					//set a one pixel image if there is no associated pic with this thing
-					((ImageView)findViewById(R.id.picSelected)).setImageResource(R.drawable.onepixel);
-				}
-
+				scaleAndSetPic(picLocation);
 			}
             else if (resultCode == RESULT_CANCELED) 
             {
@@ -296,44 +304,39 @@ public class AddSomething extends Activity {
     	else if (requestCode == CHOOSE_IMAGE_ACTIVITY_REQUEST_CODE)
     	{    		
             if (resultCode == RESULT_OK) 
-            {            	
-            	//parse and retrieve the selected image's location
+            {
+				//parse and retrieve the selected image's location
+				Uri selPicUri = Uri.parse(data.getDataString());
 				String selPicLocation = "";
-            	selPicLocation = getFilePathFromContentUri(Uri.parse(data.getDataString()),this.getContentResolver());
+				selPicLocation = getFilePathFromContentUri(selPicUri, this.getContentResolver());
 
-        		Log.i("AddSomething", "selected image location is " + selPicLocation);
+				Log.i("AddSomething", "gallery image location is " + selPicLocation);
+
+				//crop the image Feb 10 2016
+				Crop.of(selPicUri, selPicUri).asSquare().start(this);
 
 				//28-aug-2015
 				//copy selected image to thingse folder
 				picLocation = copySelectedImageToThingse(selPicLocation);
 
-            	// Image chosen path            
-            	Toast.makeText(this, "Image selected is :\n" + picLocation, Toast.LENGTH_SHORT).show();
-            	
+				// Image chosen path
+				Toast.makeText(this, "Image selected is :\n" + picLocation, Toast.LENGTH_SHORT).show();
 
-				//Jul21
-				//((TextView)findViewById(R.id.picLocation)).setText("Image selected!");
+				//to stop image scaling Feb 10 2016
+				isFromGallery = true;
+				//6 Sep 2015
 				//scale and set pic
-				if(picLocation != null && picLocation.trim().length()>0)
-				{
-					BitmapFactory.Options options = new BitmapFactory.Options();
+				scaleAndSetPic(picLocation);
 
-					//setting to 1/16th of the original size
-					options.inSampleSize = 16;
+			}
+			//6 sep 2015 - crop the image
+			else if (requestCode == Crop.REQUEST_CROP && resultCode == RESULT_OK)
+			{
+				Log.i("AddSomething", "Crop returned...");
 
-					Bitmap bmp = BitmapFactory.decodeFile(picLocation, options);
+				picLocation = fileUri.toString();
 
-					Drawable d = new BitmapDrawable(getResources(), bmp);
-
-					((ImageView)findViewById(R.id.picSelected)).setImageDrawable(d);
-				}
-				else
-				{
-					//set a one pixel image if there is no associated pic with this thing
-					((ImageView)findViewById(R.id.picSelected)).setImageResource(R.drawable.onepixel);
-				}
-
-
+				Log.i("AddSomething", "*** picLocation = " + picLocation);
 			}
             else if (resultCode == RESULT_CANCELED) 
             {
@@ -350,6 +353,38 @@ public class AddSomething extends Activity {
     		
     	}
     }
+
+	//6 Sep 2015
+	private void scaleAndSetPic(String picLocation)
+	{
+		if(picLocation != null && picLocation.trim().length()>0)
+		{
+			BitmapFactory.Options options = new BitmapFactory.Options();
+
+			//setting to 1/16th of the original size for camera images only
+			if(!isFromGallery)
+			{
+				options.inSampleSize = 16;
+			}
+			else
+			{
+				options.inSampleSize = 8;
+			}
+
+
+			Bitmap bmp = BitmapFactory.decodeFile(picLocation, options);
+
+			Drawable d = new BitmapDrawable(getResources(), bmp);
+
+			((ImageView)findViewById(R.id.picSelected)).setImageDrawable(d);
+		}
+		else
+		{
+			//set a one pixel image if there is no associated pic with this thing
+			((ImageView)findViewById(R.id.picSelected)).setImageResource(R.drawable.onepixel);
+		}
+
+	}
 
 	//28-Aug-2015
 	//copy image selected to thingse folder
@@ -394,23 +429,29 @@ public class AddSomething extends Activity {
 		{
 			File source = new File(selPicLocation);
 
+
 			//if src file exists
 			if (source.exists())
 			{
 				//copy from src to dst file
 				FileChannel src = new FileInputStream(source).getChannel();
 				FileChannel dst = new FileOutputStream(destination).getChannel();
+
 				dst.transferFrom(src, 0, src.size());
 				src.close();
 				dst.close();
 			}
+
+			//16 Sep 2015 - compress image
+			compressFile(destination);
 		}
-			catch(IOException e)
+		catch(IOException e)
 		{
 			e.printStackTrace();
 		}
 
-		Log.i("AddSomething", "getOutputMediaFileUri file created"+picLocation);
+
+		Log.i("AddSomething", "copySelectedImageToThingse file created"+picLocation);
 
 		return picLocation;
 
@@ -459,21 +500,6 @@ public class AddSomething extends Activity {
 			thingField.requestFocus();
 
 			return null;
-
-			//Jul-15
-			/*new AlertDialog.Builder(AddSomething.this)
-			 .setTitle("Thing name is mandatory ")
-			 .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
-			     public void onClick(DialogInterface dialog, int whichButton) {
-			
-			    	 thingField.requestFocus(); 
-			    	 Log.i("AddSomething", "ok clicked");
-			    	 return;
-			     	
-			     }
-			 }).create().show();*/
-		
-    		
     	}
     	
     	inputs[0] = thing;
@@ -508,18 +534,6 @@ public class AddSomething extends Activity {
 
 			return null;
 
-			/* Jul15 -new AlertDialog.Builder(AddSomething.this)
-			 .setTitle("Price is mandatory if thing is not gift ")
-			 .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
-			     public void onClick(DialogInterface dialog, int whichButton) {
-			
-					Log.i("AddSomething", "ok clicked");
-					priceField.requestFocus();
-					dialog.dismiss();
-			     	
-			     }
-			 }).create().show();*/
-
     	}
     	
     	//purchased date
@@ -537,7 +551,7 @@ public class AddSomething extends Activity {
             
     
     // Create a file Uri for saving image captured 
-    private static Uri getOutputMediaFileUri()
+    private Uri getOutputMediaFileUri()
     {
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), ".Thingse");
 
@@ -570,10 +584,10 @@ public class AddSomething extends Activity {
 		// Create a media file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         
-        File mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_"+ timeStamp + ".jpg");
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_"+ timeStamp + ".jpg");
 
 		//28-Aug-2015
-		picLocation = mediaFile.getAbsolutePath();
+		//picLocation = mediaFile.getAbsolutePath();
          
         Log.i("AddSomething", "getOutputMediaFileUri file created"+mediaFile.getAbsolutePath());
         
@@ -600,9 +614,41 @@ public class AddSomething extends Activity {
     	//close the db
     	adapter.close();
     }
-    
+
+	//compress image file
+	private void compressFile(File fileForCompressing)
+	{
+		try
+		{
+			byte[] buffer = new byte[(int) fileForCompressing.length()];
+
+			//read from camera image file
+			FileInputStream fis = new FileInputStream(fileForCompressing);
+			fis.read(buffer,0,(int) fileForCompressing.length());
+			fis.close();
+
+			//we are using bitmap's compression
+			Bitmap compressedBitmap =  BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			compressedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+			bos.close();
+
+			//write compressed data back to file
+			byte[] scaledData = bos.toByteArray();
+			FileOutputStream fos = new FileOutputStream(fileForCompressing);
+			fos.write(scaledData);
+			fos.close();
+
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+
+
+	}
     //picture location
-    private static String picLocation = "";
+    private String picLocation = "";
     
     //thing name
     private String thing ="";    
@@ -618,5 +664,11 @@ public class AddSomething extends Activity {
     
     //for date picker
     private DatePickerFragment newFragment = null;
-    
+
+	//camera image file for compression
+	private File mediaFile = null;
+
+	//from gallery
+	private boolean isFromGallery = false;
+
 }

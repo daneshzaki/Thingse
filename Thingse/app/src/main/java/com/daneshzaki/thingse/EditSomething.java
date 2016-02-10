@@ -1,6 +1,12 @@
 package com.daneshzaki.thingse;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -11,6 +17,7 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -36,6 +43,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.soundcloud.android.crop.Crop;
 
 //This class corresponds to the Edit screen that is called when a "Thing" is edited from the "View Thing" screen
 public class EditSomething extends Activity {
@@ -100,12 +109,26 @@ public class EditSomething extends Activity {
     	// create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        // create a file to save the image
-        fileUri = getOutputMediaFileUri();
-        
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name      
+		//set camera orientation
+		intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        // start the image capture Intent
+		// create a file to save the image
+		fileUri = getOutputMediaFileUri();
+
+		picLocation = fileUri.toString();
+
+		Log.i("EditSomething", "picLocation = " + picLocation);
+
+		// set the image file name
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+
+		//crop the image
+		Crop.of(fileUri, fileUri).asSquare().start(this);
+
+		//16 Sep 2015 - compress image
+		compressFile(mediaFile);
+
+		// start the image capture Intent
         startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     	
     }
@@ -116,11 +139,12 @@ public class EditSomething extends Activity {
     	Log.i("EditSomething", "Upload button clicked");
 
     	//call gallery to display images
-    	//Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
     	Intent intent = new Intent(Intent.ACTION_PICK);
     	intent.setDataAndType(
-    			Uri.fromFile(new File( Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"/")),"*/*");
-    	
+				Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "/")), "*/*");
+
+		Log.i("EditSomething", "Calling crop...");
+
     	startActivityForResult(intent, CHOOSE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
@@ -146,8 +170,8 @@ public class EditSomething extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem menuItem)
 	{
-		Log.i("ViewSomething", "MenuItem=" + menuItem);
-		Log.i("ViewSomething", "MenuItem title=" + menuItem.getTitle());
+		Log.i("EditSomething", "MenuItem=" + menuItem);
+		Log.i("EditSomething", "MenuItem title=" + menuItem.getTitle());
 
 		// save
 		if (menuItem.getTitle() != null && menuItem.getTitle().equals("Save"))
@@ -165,109 +189,196 @@ public class EditSomething extends Activity {
 		return true;
 	}
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) 
-    {    	
-    	//return from camera
-    	if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) 
-        {
-            if (resultCode == RESULT_OK) 
-            {
-            	picLocation = fileUri.toString().replaceFirst("file://", "");
+	//handle return from camera or gallery (for choose pic)
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		Log.i("EditSomething", "request code="+requestCode);
+		Log.i("EditSomething", "result code="+resultCode);
 
-            	Log.i("AddSomething","picLocation = "+picLocation);
-            	
-            	// Image captured and saved to fileUri specified in the Intent            
-            	Toast.makeText(this, "Image saved to:\n" + picLocation, Toast.LENGTH_LONG).show();
+		//if returning from camera
+		if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
+		{
+			if (resultCode == RESULT_OK)
+			{
+				//6 Sep 2015
+				picLocation = fileUri.toString().replaceFirst("file://", "");
 
-				//Jul15
-				//((TextView)findViewById(R.id.picLocation)).setText("Image captured!");
+				Log.i("EditSomething", "*** picLocation = " + picLocation);
 
+				// Image captured and saved to fileUri specified in the Intent
+				Toast.makeText(this, "Image saved to:\n" + picLocation, Toast.LENGTH_SHORT).show();
+
+				//6 Sep 2015
 				//scale and set pic
-				if(picLocation != null && picLocation.trim().length()>0)
-				{
-					BitmapFactory.Options options = new BitmapFactory.Options();
-
-					//setting to 1/16th of the original size
-					options.inSampleSize = 16;
-
-					Bitmap bmp = BitmapFactory.decodeFile(picLocation, options);
-
-					Drawable d = new BitmapDrawable(getResources(), bmp);
-
-					((ImageView)findViewById(R.id.picSelected)).setImageDrawable(d);
-				}
-				else
-				{
-					//set a one pixel image if there is no associated pic with this thing
-					((ImageView)findViewById(R.id.picSelected)).setImageResource(R.drawable.onepixel);
-				}
-
-
+				scaleAndSetPic(picLocation);
 			}
-            else if (resultCode == RESULT_CANCELED) 
-            {
-                // User cancelled the image capture
-            	Log.i("EditSomething", "user cancelled camera use");
-            } 
-            else 
-            {
-                // Image capture failed, advise user
-            	Log.i("EditSomething", "camera failed!!!");
-            }
-        }
-    	//return from gallery app
-    	else if (requestCode == CHOOSE_IMAGE_ACTIVITY_REQUEST_CODE)
-    	{    		
-            if (resultCode == RESULT_OK) 
-            {
-            	//get the location of the selected image
-            	picLocation = getFilePathFromContentUri(Uri.parse(data.getDataString()),this.getContentResolver());
-            	
-            	Log.i("EditSomething", "onActivityResult image selection location is "+picLocation);
+			else if (resultCode == RESULT_CANCELED)
+			{
+				// User cancelled the image capture
+				Log.i("EditSomething", "user cancelled camera use");
+			}
+			else
+			{
+				// Image capture failed, advise user
+				Log.i("EditSomething", "camera capture failed!!!!!!!!!!");
+				return;
+			}
+		}
+		//if returning from gallery (choosing pic)
+		else if (requestCode == CHOOSE_IMAGE_ACTIVITY_REQUEST_CODE)
+		{
+			if (resultCode == RESULT_OK)
+			{
+				//parse and retrieve the selected image's location
+				Uri selPicUri = Uri.parse(data.getDataString());
+				String selPicLocation = "";
+				selPicLocation = getFilePathFromContentUri(selPicUri, this.getContentResolver());
 
-            	// Image chosen path            
-            	Toast.makeText(this, "Image selected is :\n" + picLocation, Toast.LENGTH_LONG).show();
+				Log.i("EditSomething", "gallery image location is " + selPicLocation);
 
-				//Jul21
-				//((TextView)findViewById(R.id.picLocation)).setText("Image selected!");
+				//crop the image
+				Crop.of(selPicUri, selPicUri).asSquare().start(this);
+
+				//28-aug-2015
+				//copy selected image to thingse folder
+				picLocation = copySelectedImageToThingse(selPicLocation);
+
+				// Image chosen path
+				Toast.makeText(this, "Image selected is :\n" + picLocation, Toast.LENGTH_SHORT).show();
+
+				//to stop image scaling Feb 10 2016
+				isFromGallery = true;
+
+				//6 Sep 2015
 				//scale and set pic
-				if(picLocation != null && picLocation.trim().length()>0)
-				{
-					BitmapFactory.Options options = new BitmapFactory.Options();
+				scaleAndSetPic(picLocation);
+			}
+			//6 sep 2015 - crop the image
+			else if (requestCode == Crop.REQUEST_CROP && resultCode == RESULT_OK)
+			{
+				Log.i("EditSomething", "Crop returned...");
 
-					//setting to 1/16th of the original size
-					options.inSampleSize = 16;
+				picLocation = fileUri.toString();
 
-					Bitmap bmp = BitmapFactory.decodeFile(picLocation, options);
+				Log.i("EditSomething", "*** picLocation = " + picLocation);
+			}
+			else if (resultCode == RESULT_CANCELED)
+			{
+				// User cancelled the image capture
+				Log.i("EditSomething", "image selection cancelled" );
+			}
+			else
+			{
+				// Image capture failed, advise user
+				Log.i("EditSomething", "image selection failed!!!!!!!!!!");
+				return;
+			}
 
-					Drawable d = new BitmapDrawable(getResources(), bmp);
+		}
+	}
 
-					((ImageView)findViewById(R.id.picSelected)).setImageDrawable(d);
-				}
-				else
-				{
-					//set a one pixel image if there is no associated pic with this thing
-					((ImageView)findViewById(R.id.picSelected)).setImageResource(R.drawable.onepixel);
-				}
-            	
-            } 
-            else if (resultCode == RESULT_CANCELED) 
-            {
-                // User cancelled the image capture
-            	Log.i("EditSomething", "user cancelled image selection" );
+	//6 Sep 2015
+	private void scaleAndSetPic(String picLocation)
+	{
+		if(picLocation != null && picLocation.trim().length()>0)
+		{
+			BitmapFactory.Options options = new BitmapFactory.Options();
 
-            } 
-            else 
-            {
-                // Image capture failed, advise user
-            	Log.i("EditSomething", "image capture failed!!!" );            	
-            }
-    		
-    	}
-    
-    }
-    
+			//setting to 1/16th of the original size for camera images only
+			if(!isFromGallery)
+			{
+				options.inSampleSize = 16;
+			}
+			else
+			{
+				options.inSampleSize = 8;
+			}
+
+			Bitmap bmp = BitmapFactory.decodeFile(picLocation, options);
+
+			Drawable d = new BitmapDrawable(getResources(), bmp);
+
+			((ImageView)findViewById(R.id.picSelected)).setImageDrawable(d);
+		}
+		else
+		{
+			//set a one pixel image if there is no associated pic with this thing
+			((ImageView)findViewById(R.id.picSelected)).setImageResource(R.drawable.onepixel);
+		}
+
+	}
+
+	//28-Aug-2015
+	//copy image selected to thingse folder
+	private String copySelectedImageToThingse(String selPicLocation)
+	{
+		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), ".Thingse");
+
+		// Create the storage directory if it does not exist
+		if (! mediaStorageDir.exists())
+		{
+			if (! mediaStorageDir.mkdirs())
+			{
+				Log.d("EditSomething", "failed to create directory");
+				return null;
+			}
+		}
+
+		//create a nomedia file to show
+		try
+		{
+			File noMedia = new File(mediaStorageDir.getPath() + ".nomedia");
+
+			if(!noMedia.exists())
+			{
+				FileWriter f = new FileWriter(noMedia);
+			}
+
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		// Create a media file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+		File destination = new File(mediaStorageDir.getPath() + File.separator + "IMG_"+ timeStamp + ".jpg");
+
+		picLocation = destination.getAbsolutePath();
+
+		try
+		{
+			File source = new File(selPicLocation);
+
+
+			//if src file exists
+			if (source.exists())
+			{
+				//copy from src to dst file
+				FileChannel src = new FileInputStream(source).getChannel();
+				FileChannel dst = new FileOutputStream(destination).getChannel();
+
+				dst.transferFrom(src, 0, src.size());
+				src.close();
+				dst.close();
+			}
+
+			compressFile(destination);
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		Log.i("EditSomething", "copySelectedImageToThingse file created"+picLocation);
+
+		return picLocation;
+
+
+	}
+
     //parse and get the image location
     private String getFilePathFromContentUri(Uri selectedImageUri, ContentResolver contentResolver) 
     {
@@ -346,7 +457,7 @@ public class EditSomething extends Activity {
     	}
     	
     	//pic location can be null
-    	if(bundle.getString("picLocation")!= null)
+		if(bundle.getString("picLocation")!= null && bundle.getString("picLocation").trim().length()>0)
     	{
     		((TextView)findViewById(R.id.picLabel)).setText( "Replace Picture?");
     	}
@@ -380,19 +491,6 @@ public class EditSomething extends Activity {
 
 			return null;
 
-			/*Jul-15 new AlertDialog.Builder(EditSomething.this)
-			 .setTitle("Thing name is mandatory ")
-			 .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
-			     public void onClick(DialogInterface dialog, int whichButton) {
-			
-			    	 thingField.requestFocus(); 
-			    	 Log.i("EditSomething", "ok clicked");
-			    	 dialog.dismiss();
-			     	
-			     }
-			 }).create().show();*/
-		
-    		
     	}
     	
     	inputs[0] = thing;
@@ -427,18 +525,6 @@ public class EditSomething extends Activity {
 
 			return null;
 
-			/*Jul15 - new AlertDialog.Builder(EditSomething.this)
-			 .setTitle("Price is mandatory if thing is not gift ")
-			 .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
-			     public void onClick(DialogInterface dialog, int whichButton) {
-			
-					Log.i("EditSomething", "ok clicked");
-					priceField.requestFocus();
-					dialog.dismiss();
-			     	
-			     }
-			 }).create().show();*/
-    		
     	}
     	
     	//purchased date
@@ -465,7 +551,7 @@ public class EditSomething extends Activity {
     }            
     
     // Create a file Uri for saving image captured 
-    private static Uri getOutputMediaFileUri()
+    private Uri getOutputMediaFileUri()
     {
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Thingse");
         
@@ -482,7 +568,7 @@ public class EditSomething extends Activity {
         // Create a media file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         
-        File mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_"+ timeStamp + ".jpg");
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_"+ timeStamp + ".jpg");
          
         Log.i("EditSomething", "getOutputMediaFileUri file created");
         
@@ -509,8 +595,36 @@ public class EditSomething extends Activity {
     	//close the db
     	adapter.close();
     }
-    
-    //picture location
+
+	//compress image file
+	private void compressFile(File fileForCompressing)
+	{
+		try {
+			byte[] buffer = new byte[(int) fileForCompressing.length()];
+
+			//read from camera image file
+			FileInputStream fis = new FileInputStream(fileForCompressing);
+			fis.read(buffer, 0, (int) fileForCompressing.length());
+			fis.close();
+
+			//we are using bitmap's compression
+			Bitmap compressedBitmap = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			compressedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+			bos.close();
+
+			//write compressed data back to file
+			byte[] scaledData = bos.toByteArray();
+			FileOutputStream fos = new FileOutputStream(fileForCompressing);
+			fos.write(scaledData);
+			fos.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+		//picture location
     private String picLocation = "";
 
     //thing name
@@ -534,5 +648,9 @@ public class EditSomething extends Activity {
     //currency
     private String curSymbol ="";
 
-    
+	//camera image file for compression
+	private File mediaFile = null;
+
+	//from gallery
+	private boolean isFromGallery = false;
 }

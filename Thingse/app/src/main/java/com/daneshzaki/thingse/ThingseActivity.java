@@ -1,11 +1,10 @@
 package com.daneshzaki.thingse;
 
-import java.util.ArrayList;
 
+import java.util.ArrayList;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -30,10 +29,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-//import android.support.design.widget.FloatingActionButton;
 import com.etsy.android.grid.StaggeredGridView;
 import com.melnykov.fab.*;
 
@@ -84,13 +81,6 @@ public class ThingseActivity extends Activity implements AdapterView.OnItemClick
 			emptyView.setText("");
 		}
 
-
-		// get price Arr
-		final String[] priceArr = dispThingsArList.get(1);
-
-		// get purchDate Arr
-		final String[] purchDateArr = dispThingsArList.get(2);
-
 		// create an adapter with custom style for text
 		ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_checked, nameArr)
@@ -128,6 +118,7 @@ public class ThingseActivity extends Activity implements AdapterView.OnItemClick
 					tv1.setPadding(7, 5, 5, 7);
 					tv1.setTextSize(16.0f);
 					tv1.setTextColor(android.graphics.Color.parseColor("#fff3f3f3"));
+					tv1.setHovered(true);
 					tv1.setText(nameArr[position]);
 
 					ll = new FrameLayout(getContext());
@@ -144,6 +135,7 @@ public class ThingseActivity extends Activity implements AdapterView.OnItemClick
 					iv = (ImageView) ll.getChildAt(0);
 					tv1 = (TextView) (ll.getChildAt(1));
 					tv1.setTypeface(typeface, Typeface.BOLD);
+					tv1.setHovered(true);
 					// display thing image
 					displayThingImage(iv, position);
 					tv1.setText(nameArr[position]);
@@ -227,12 +219,8 @@ public class ThingseActivity extends Activity implements AdapterView.OnItemClick
 		bundle.putString("description", thingsArList.get(position)
 				.getDescription());
 
-		// thing pic location
-		bundle.putString("picLocation", thingsArList.get(position)
-				.getPicLocation());
-		Log.i("ThingseActivity",
-				"onListItemClick setting bundle pic location = "
-						+ bundle.getString("picLocation"));
+		// thing pic
+		bundle.putString("picLocation", thingsArList.get(position).getPicLocation());
 
 		// create an intent and add the bundle to it
 		Intent displayIntent = new Intent(ThingseActivity.this,
@@ -259,27 +247,12 @@ public class ThingseActivity extends Activity implements AdapterView.OnItemClick
 		 finish();
 	}
 
-	// call addSomething Activity to add things
-	public void callAddSomething(View v)
-	{
-		Log.i("ThingseActivity", "callAddSomething");
-
-		startActivity(new Intent(ThingseActivity.this, AddSomething.class));
-
-	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		menu.add("Preferences").setIcon(android.R.drawable.ic_menu_manage)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-		// menu.add(Menu.NONE, 0, 0, "Preferences");
-
-		//menu.add("Add").setIcon(android.R.drawable.ic_menu_manage)
-		//		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
 		return true;
-
 	}
 
 	@Override
@@ -289,13 +262,6 @@ public class ThingseActivity extends Activity implements AdapterView.OnItemClick
 		if (menuItem.getTitle().equals("Preferences"))
 		{
 			startActivity(new Intent(this, Preferences.class));
-
-		}
-
-		// call add something activity
-		if (menuItem.getTitle().equals("Add"))
-		{
-			startActivity(new Intent(ThingseActivity.this, AddSomething.class));
 		}
 
 		return true;
@@ -331,8 +297,6 @@ public class ThingseActivity extends Activity implements AdapterView.OnItemClick
 			BitmapFactory.Options options = new BitmapFactory.Options();
 
 			options.inSampleSize = 6;
-
-			options.inPurgeable = true;
 
 			options.inDither = false;
 
@@ -388,6 +352,7 @@ public class ThingseActivity extends Activity implements AdapterView.OnItemClick
 
 		// navigate through cursor to retrieve all records starting from the
 		// first
+
 		if (cursor != null && cursor.moveToFirst())
 		{
 			// reset arrays' size for storing thing name, price and date for
