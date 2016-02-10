@@ -2,13 +2,17 @@ package com.daneshzaki.thingse;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
@@ -50,29 +54,46 @@ public class Preferences extends PreferenceActivity
 		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
 		actionBar.setHomeButtonEnabled(true);
 
-		//instantiate db adapter and open db
-		adapter = new SQLAdapter(this);
-		adapter.open();
-		
 		// handle preference actions
 		
 		// about dialog
 		Preference aboutPref = (Preference) findPreference("aboutPref");
 
-		aboutPref.setOnPreferenceClickListener(new OnPreferenceClickListener()
-		{
+		aboutPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
-			public boolean onPreferenceClick(Preference preference)
-			{
-				Log.i("Preferences", "about clicked");
+												   public boolean onPreferenceClick(Preference preference) {
+													   Log.i("Preferences", "about clicked");
 
-				// display about screen
-				startActivity(new Intent(Preferences.this, AboutThingse.class));
-				return true;
-			}
-		}
+													   // display about screen
+													   startActivity(new Intent(Preferences.this, AboutThingse.class));
+													   return true;
+												   }
+											   }
 
 		);
+
+		// open source licenses dialog
+		Preference osPref = (Preference) findPreference("osPref");
+
+		osPref.setOnPreferenceClickListener(new OnPreferenceClickListener()
+											   {
+
+												   public boolean onPreferenceClick(Preference preference)
+												   {
+													   Log.i("Preferences", "open src clicked");
+
+													   // display about screen
+													   startActivity(new Intent(Preferences.this, OpenSrcLicenses.class));
+													   return true;
+												   }
+											   }
+
+		);
+
+		//instantiate db adapter and open db
+		adapter = new SQLAdapter(this);
+		adapter.open();
+
 
 		// export contents to file
 		Preference exportPref = (Preference) findPreference("export");
@@ -283,6 +304,9 @@ public class Preferences extends PreferenceActivity
 			buf.append(content);
 			
 			buf.close();
+
+
+
 		} catch (IOException e)
 		{
 			Log.e("Preferences", e.getMessage(), e);

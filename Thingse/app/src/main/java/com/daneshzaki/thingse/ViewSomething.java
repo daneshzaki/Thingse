@@ -40,10 +40,8 @@ public class ViewSomething extends Activity {
 
 		setContentView(R.layout.activity_view_something);
 
-
         //set values of the selected thing in the input fields
         bundle = this.getIntent().getBundleExtra("thing");
-
 
 		Log.i("ViewSomething", "Before loadValues Bundle is "+bundle);
 
@@ -60,7 +58,7 @@ public class ViewSomething extends Activity {
 		Log.i("ViewSomething", "*** viewThingFull ***");
 
 		//do not open full screen if there is no image
-		if(bundle.getString("picLocation")== null || bundle.getString("picLocation").trim().length()==0)
+		if(bundle.getString("picLocation")== null || bundle.getString("picLocation").trim().length() == 0)
 		{
 			//show Toast
 			Toast.makeText(getBaseContext(), "No pic associated with this thing", Toast.LENGTH_SHORT).show();
@@ -145,7 +143,6 @@ public class ViewSomething extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-
 		menu.add("Edit").setIcon(R.drawable.ic_mode_edit_black_18dp)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
@@ -161,7 +158,6 @@ public class ViewSomething extends Activity {
 	{
 		Log.i("ViewSomething","MenuItem="+menuItem);
 		Log.i("ViewSomething", "MenuItem title=" + menuItem.getTitle());
-
 
 		// edit
 		if (menuItem.getTitle() != null && menuItem.getTitle().equals("Edit"))
@@ -187,7 +183,6 @@ public class ViewSomething extends Activity {
 			parentIntent.putExtra("thing", bundle);
 
 			startActivity(parentIntent);
-
 		}
 
 		return super.onOptionsItemSelected(menuItem);
@@ -226,7 +221,6 @@ public class ViewSomething extends Activity {
 			//set currency chosen by user
 			currencyLabel = sharedPrefs.getString("currencyPref", "Rs.");
 			((TextView)findViewById( R.id.priceValue)).setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_price,0,0,0);
-
 		}
     	
     	//set price
@@ -245,42 +239,36 @@ public class ViewSomething extends Activity {
     		((TextView)findViewById( R.id.descValue)).setText("One of the many things that I have");
     	}
 
-
 		//set fonts for all text
 		Typeface typeface = Typeface.createFromAsset( getResources().getAssets(), "SourceSansPro-Regular.otf");
 		((TextView)findViewById( R.id.datePurchValue)).setTypeface(typeface);
 		((TextView)findViewById( R.id.priceValue)).setTypeface(typeface);
 		((TextView)findViewById( R.id.descValue)).setTypeface(typeface);
 		ImageView thingImage = ((ImageView)findViewById(R.id.thingImage));
-    	//scale and set pic 
-    	if(bundle.getString("picLocation")!= null && bundle.getString("picLocation").trim().length()>0)
+
+    	//scale and set pic
+		if(bundle.getString("picLocation")!= null && bundle.getString("picLocation").trim().length() > 0)
     	{
 			BitmapFactory.Options options = new BitmapFactory.Options();
 
 			options.inSampleSize = 4;
+			//9-Sep-2015 scale large images
+			options.inJustDecodeBounds = true;
 
-			options.inDither = true;
+			options.inDither = false;
 
-			//Jul-15 final int THUMBNAIL_SIZE = 64;
-			/*final int THUMBNAIL_SIZE = 128;
-
-			Bitmap bmp = BitmapFactory.decodeFile(bundle.getString("picLocation"), options);
-
-			Log.i("ViewSomething", "bmp.getWidth() = "+bmp.getWidth());
-
-			Log.i("ViewSomething", "bmp.getHeight() = " + bmp.getHeight());
-
-			int ratio = bmp.getWidth() / bmp.getHeight();
-
-			if (ratio <=0)
+			if (options.outWidth > 3000 || options.outHeight > 2000)
 			{
-				ratio = 1;
+				options.inSampleSize = 6;
+			} else if (options.outWidth > 2000 || options.outHeight > 1500)
+			{
+				options.inSampleSize = 5;
+			} else if (options.outWidth > 1000 || options.outHeight > 1000)
+			{
+				options.inSampleSize = 3;
 			}
+			options.inJustDecodeBounds = false;
 
-			bmp = Bitmap.createScaledBitmap(bmp,
-					(int) (THUMBNAIL_SIZE * ratio), THUMBNAIL_SIZE, false);
-
-*/
 			Bitmap bmp = BitmapFactory.decodeFile(bundle.getString("picLocation"), options);
 
 			//get display size
@@ -290,32 +278,39 @@ public class ViewSomething extends Activity {
 			int width = size.x;
 			int height = size.y;
 
-			bmp = Bitmap.createScaledBitmap(bmp, width, 600, true);
+			//9-Sep-2015 scale large images
+			Log.i("ViewSomething", "***display width="+width);
+			Log.i("ViewSomething", "***display height="+height);
+
+			Log.i("ViewSomething", "***bmp width="+bmp.getWidth());
+			Log.i("ViewSomething", "***bmp height="+bmp.getHeight());
+
+			//handle wide images
+			int ratio = bmp.getWidth() / bmp.getHeight();
+
+			if (ratio <=0)
+			{
+				ratio = 1;
+			}
+
+			bmp = Bitmap.createScaledBitmap(bmp,
+					(int) (height * ratio* 0.5), (int)(height *0.5), false);
 
 			Drawable d = new BitmapDrawable(getResources(), bmp);
-
-
-
-			//thingImage.setScaleX(0.75f);
-			//thingImage.setScaleY(0.75f);
 			thingImage.setImageDrawable(d);
+			thingImage.setBackgroundColor(Color.LTGRAY);
 
     	}
     	else
     	{
     		//set default image if there is no associated pic with this thing
-
 			thingImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0.1f));
-
 			thingImage.setImageResource(R.drawable.ic_launcher);
-
+			thingImage.setBackgroundColor(Color.LTGRAY);
     	}
     	
     }
     
     //bundle for use here and for passing to edit activity
     private Bundle bundle = null;
-
-
-
 }

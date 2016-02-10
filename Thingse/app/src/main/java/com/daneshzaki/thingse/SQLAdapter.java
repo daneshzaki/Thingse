@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+
 //This class performs database operations
 //Code courtesy: Beginning Android 4 Development book
 public class SQLAdapter 
@@ -69,7 +70,7 @@ public class SQLAdapter
     //insert a thing into the database
     public long insertThing(String name, String price, 
     						String gift, String purchaseDate, 
-    						String description,String picLocation) 
+    						String description,String picLocation)
     {    	
         ContentValues initialValues = new ContentValues();
         
@@ -79,7 +80,7 @@ public class SQLAdapter
         initialValues.put(KEY_PURCHASEDATE, purchaseDate);
         initialValues.put(KEY_DESCRIPTION, description);
         initialValues.put(KEY_PICLOCATION, picLocation);
-        
+
         return db.insert(DATABASE_TABLE, null, initialValues);
     }
 
@@ -100,8 +101,7 @@ public class SQLAdapter
             		KEY_PRICE, 
             		KEY_GIFT, 
             		KEY_PURCHASEDATE, 
-            		KEY_DESCRIPTION, 
-            		KEY_PICLOCATION}, 
+            		KEY_DESCRIPTION, KEY_PICLOCATION},
             		null, null, null, null, KEY_PURCHASEDATE);
     		
     		
@@ -122,8 +122,8 @@ public class SQLAdapter
                 		KEY_PRICE, 
                 		KEY_GIFT, 
                 		KEY_PURCHASEDATE, 
-                		KEY_DESCRIPTION, 
-                		KEY_PICLOCATION},
+                		KEY_DESCRIPTION,
+                                KEY_PICLOCATION},
                 		KEY_ROWID + "=" + rowId, null,null, null, null, null);
         
         if (mCursor != null) 
@@ -146,9 +146,10 @@ public class SQLAdapter
         args.put(KEY_PURCHASEDATE, purchaseDate);
         args.put(KEY_DESCRIPTION, description);
         args.put(KEY_PICLOCATION, picLocation);
-        
+
         return db.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
+
 
 	/*
 	  Table: Thing
@@ -171,9 +172,9 @@ public class SQLAdapter
 	private static final String KEY_GIFT = "gift";
 	private static final String KEY_PURCHASEDATE = "purchaseDate";
 	private static final String KEY_DESCRIPTION = "description";
-	private static final String KEY_PICLOCATION = "picLocation";            
-  
-	private static final String TAG = "SQLAdapter";
+    private static final String KEY_PICLOCATION = "picLocation";
+
+    private static final String TAG = "SQLAdapter";
 
 	//Database and table name
 	private static final String DATABASE_NAME = "ThingseDB";
@@ -184,6 +185,7 @@ public class SQLAdapter
 	private static final String DATABASE_CREATE =
       "create table thing (_id integer primary key autoincrement, "
       + "name text not null, price real, gift text, purchaseDate datetime, description text, picLocation text);";
+
 
   private final Context context;
 

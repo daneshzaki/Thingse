@@ -32,12 +32,10 @@ public class ViewFullscreen extends Activity implements View.OnTouchListener {
         this.getWindow().setStatusBarColor(Color.BLACK);
         this.getWindow().setNavigationBarColor(Color.BLACK);
 
-
         setContentView(R.layout.activity_view_fullscreen);
 
         //get values of the selected thing into the bundle
         bundle = this.getIntent().getBundleExtra("thing");
-
 
         //load the image
         loadValues();
@@ -47,7 +45,6 @@ public class ViewFullscreen extends Activity implements View.OnTouchListener {
     //fill fields with selected thing's values
     private void loadValues()
     {
-
         if (bundle == null)
         {
             return;
@@ -58,9 +55,26 @@ public class ViewFullscreen extends Activity implements View.OnTouchListener {
         ImageView thingImage = ((ImageView)findViewById(R.id.thingImage));
         thingImage.setOnTouchListener(this);
         //scale and set pic
-        if(bundle.getString("picLocation")!= null && bundle.getString("picLocation").trim().length()>0)
+        if(bundle.getString("picLocation")!= null && bundle.getString("picLocation").trim().length() > 0)
         {
             BitmapFactory.Options options = new BitmapFactory.Options();
+
+            //9-Sep-2015 scale large images
+            options.inJustDecodeBounds = true;
+
+            options.inDither = false;
+
+            if (options.outWidth > 3000 || options.outHeight > 2000)
+            {
+                options.inSampleSize = 5;
+            } else if (options.outWidth > 2000 || options.outHeight > 1500)
+            {
+                options.inSampleSize = 4;
+            } else if (options.outWidth > 1000 || options.outHeight > 1000)
+            {
+                options.inSampleSize = 3;
+            }
+            options.inJustDecodeBounds = false;
 
             Bitmap bmp = BitmapFactory.decodeFile(bundle.getString("picLocation"), options);
 
@@ -71,7 +85,15 @@ public class ViewFullscreen extends Activity implements View.OnTouchListener {
             int width = size.x;
             int height = size.y;
 
-            bmp = Bitmap.createScaledBitmap(bmp, width, height, true);
+            //handle wide images
+            int ratio = bmp.getWidth() / bmp.getHeight();
+
+            if (ratio <=0)
+            {
+                ratio = 1;
+            }
+
+            bmp = Bitmap.createScaledBitmap(bmp, (int) (height * ratio), height, false);
 
             Drawable d = new BitmapDrawable(getResources(), bmp);
             thingImage.setImageDrawable(d);
@@ -81,7 +103,6 @@ public class ViewFullscreen extends Activity implements View.OnTouchListener {
         {
             //set a default image if there is no associated pic with this thing
             thingImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0.1f));
-
             thingImage.setImageResource(R.drawable.ic_launcher);
 
         }
