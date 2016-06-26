@@ -8,5 +8,5 @@ Thingse is an Android app to keep track of stuff you have.
 ![Thingse](Edit-fontchanges.png)
 ![Thingse](About-new-icon.png)
 
-For details, please visit https://blog.pleb.in/ 
+For details, please visit http://blog.pleb.in/ 
 
